@@ -8,9 +8,13 @@
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         table, th, td { border: 1px solid #ccc; }
         th, td { padding: 10px; text-align: left; }
-        .btn { padding: 8px 12px; text-decoration: none; border: 1px solid #333; margin-right: 5px; }
+        .btn { padding: 8px 12px; text-decoration: none; border: 1px solid #333; margin-right: 5px; display: inline-block; }
         .ok { color: green; }
         .error { color: red; }
+        .filtros { margin-top: 20px; margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; }
+        .filtros label { display: block; margin-top: 10px; }
+        .filtros input, .filtros select { width: 300px; padding: 6px; margin-top: 4px; }
+        .acciones-filtro { margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -21,6 +25,39 @@
 <p class="error" th:if="${error}" th:text="${error}"></p>
 
 <a th:href="@{/propiedades/nueva}" class="btn">Nueva Propiedad</a>
+
+<div class="filtros">
+    <form th:action="@{/propiedades}" method="get">
+        <label>Dirección</label>
+        <input type="text" name="direccion" th:value="${direccion}">
+
+        <label>Ciudad</label>
+        <input type="text" name="ciudad" th:value="${ciudad}">
+
+        <label>Tipo de propiedad</label>
+        <select name="tipoPropiedad">
+            <option value="">Todos</option>
+            <option value="casa" th:selected="${tipoPropiedad == 'casa'}">Casa</option>
+            <option value="departamento" th:selected="${tipoPropiedad == 'departamento'}">Departamento</option>
+            <option value="local" th:selected="${tipoPropiedad == 'local'}">Local</option>
+            <option value="otro" th:selected="${tipoPropiedad == 'otro'}">Otro</option>
+        </select>
+
+        <label>Estado de disponibilidad</label>
+        <select name="estadoDisponibilidad">
+            <option value="">Todos</option>
+            <option value="disponible" th:selected="${estadoDisponibilidad == 'disponible'}">Disponible</option>
+            <option value="reservada" th:selected="${estadoDisponibilidad == 'reservada'}">Reservada</option>
+            <option value="alquilada" th:selected="${estadoDisponibilidad == 'alquilada'}">Alquilada</option>
+            <option value="inactiva" th:selected="${estadoDisponibilidad == 'inactiva'}">Inactiva</option>
+        </select>
+
+        <div class="acciones-filtro">
+            <button type="submit" class="btn">Buscar</button>
+            <a th:href="@{/propiedades}" class="btn">Limpiar</a>
+        </div>
+    </form>
+</div>
 
 <table>
     <thead>
