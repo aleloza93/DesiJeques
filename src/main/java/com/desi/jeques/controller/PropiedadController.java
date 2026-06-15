@@ -21,8 +21,20 @@ public class PropiedadController {
     }
 
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("propiedades", propiedadService.listarActivas());
+    public String listar(@RequestParam(required = false) String direccion,
+                         @RequestParam(required = false) String ciudad,
+                         @RequestParam(required = false) String tipoPropiedad,
+                         @RequestParam(required = false) String estadoDisponibilidad,
+                         Model model) {
+
+        model.addAttribute("propiedades",
+                propiedadService.listarConFiltros(direccion, ciudad, tipoPropiedad, estadoDisponibilidad));
+
+        model.addAttribute("direccion", direccion);
+        model.addAttribute("ciudad", ciudad);
+        model.addAttribute("tipoPropiedad", tipoPropiedad);
+        model.addAttribute("estadoDisponibilidad", estadoDisponibilidad);
+
         return "propiedades/listado";
     }
 

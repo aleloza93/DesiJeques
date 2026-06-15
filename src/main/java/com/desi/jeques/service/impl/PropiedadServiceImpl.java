@@ -29,6 +29,16 @@ public class PropiedadServiceImpl implements PropiedadService {
     }
 
     @Override
+    public List<Propiedad> listarConFiltros(String direccion, String ciudad, String tipoPropiedad, String estadoDisponibilidad) {
+        return propiedadRepository.buscarConFiltros(
+                normalizarTexto(direccion),
+                normalizarTexto(ciudad),
+                normalizarTexto(tipoPropiedad),
+                normalizarTexto(estadoDisponibilidad)
+        );
+    }
+
+    @Override
     public Propiedad buscarPorId(Long id) {
         return propiedadRepository.findById(id).orElse(null);
     }
@@ -91,5 +101,12 @@ public class PropiedadServiceImpl implements PropiedadService {
         historial.setEstado(propiedad.getEstadoDisponibilidad());
         historial.setFechaCambio(LocalDateTime.now());
         historialRepository.save(historial);
+    }
+
+    private String normalizarTexto(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return null;
+        }
+        return valor.trim();
     }
 }
