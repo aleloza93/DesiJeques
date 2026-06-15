@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio - DesiJeques</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        p {
+            color: #444;
+            margin-bottom: 30px;
+        }
+        .contenedor {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .tarjeta {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            width: 220px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .tarjeta h2 {
+            margin-top: 0;
+        }
+        .tarjeta p {
+            min-height: 60px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            border: 1px solid #333;
+            text-decoration: none;
+            color: #000;
+            background: #fff;
+        }
+        .pendiente {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<h1>DesiJeques</h1>
+<p>Sistema de gestión inmobiliaria - Sprint actual</p>
+
+<div class="contenedor">
+    <div class="tarjeta">
+        <h2>Propiedades</h2>
+        <p>ABMC de propiedades con filtros, edición y eliminación lógica.</p>
+        <a th:href="@{/propiedades}" class="btn">Ingresar</a>
+    </div>
+
+    <div class="tarjeta">
+        <h2>Publicaciones</h2>
+        <p class="pendiente">Módulo pendiente de implementación.</p>
+        <a th:href="@{/publicaciones}" class="btn">Ver</a>
+    </div>
+
+    <div class="tarjeta">
+        <h2>Contratos</h2>
+        <p class="pendiente">Módulo pendiente de implementación.</p>
+        <a th:href="@{/contratos}" class="btn">Ver</a>
+    </div>
+
+    <div class="tarjeta">
+        <h2>Facturas</h2>
+        <p class="pendiente">Módulo pendiente de implementación.</p>
+        <a th:href="@{/facturas}" class="btn">Ver</a>
+    </div>
+</div>
+
+</body>
+</html>

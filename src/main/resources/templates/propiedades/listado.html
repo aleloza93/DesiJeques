@@ -18,9 +18,10 @@
     </style>
 </head>
 <body>
+	
 
 <h1>Propiedades</h1>
-
+<a th:href="@{/}" class="btn">Inicio</a>
 <p class="ok" th:if="${ok}" th:text="${ok}"></p>
 <p class="error" th:if="${error}" th:text="${error}"></p>
 
@@ -93,4 +94,5 @@
 </table>
 
 </body>
+
 </html>
