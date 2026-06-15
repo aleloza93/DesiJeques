@@ -69,20 +69,20 @@ public class PropiedadController {
                           Model model,
                           RedirectAttributes redirectAttributes) {
 
-        if (propiedad.getDireccion() == null || propiedad.getDireccion().isBlank()
-                || propiedad.getCiudad() == null || propiedad.getCiudad().isBlank()
-                || propiedad.getTipoPropiedad() == null || propiedad.getTipoPropiedad().isBlank()
-                || propiedad.getCantidadAmbientes() == null || propiedad.getCantidadAmbientes() <= 0
-                || propiedad.getMetrosCuadrados() == null || propiedad.getMetrosCuadrados() <= 0
-                || propiedad.getDescripcion() == null || propiedad.getDescripcion().isBlank()
-                || propiedad.getEstadoDisponibilidad() == null || propiedad.getEstadoDisponibilidad().isBlank()
-                || propiedad.getPropietario() == null || propiedad.getPropietario().getId() == null) {
+    	if (propiedad.getDireccion() == null || propiedad.getDireccion().isBlank()
+    	        || propiedad.getCiudad() == null || propiedad.getCiudad().isBlank()
+    	        || propiedad.getTipoPropiedad() == null || propiedad.getTipoPropiedad().isBlank()
+    	        || propiedad.getCantidadAmbientes() == null || propiedad.getCantidadAmbientes() <= 0
+    	        || propiedad.getMetrosCuadrados() == null || propiedad.getMetrosCuadrados() <= 0
+    	        || propiedad.getDescripcion() == null || propiedad.getDescripcion().isBlank()
+    	        || propiedad.getEstadoDisponibilidad() == null || propiedad.getEstadoDisponibilidad().isBlank()
+    	        || propiedad.getPropietario() == null || propiedad.getPropietario().getId() == null) {
 
-            model.addAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
-            model.addAttribute("personas", personaService.listarActivas());
-            model.addAttribute("modoEdicion", propiedad.getId() != null);
-            return "propiedades/formulario";
-        }
+    	    model.addAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
+    	    model.addAttribute("personas", personaService.listarActivas());
+    	    model.addAttribute("modoEdicion", propiedad.getId() != null);
+    	    return "propiedades/formulario";
+    	}
 
         if (propiedadService.existeDuplicada(propiedad.getDireccion(), propiedad.getCiudad(), propiedad.getId())) {
             model.addAttribute("error", "Ya existe una propiedad activa con la misma dirección y ciudad.");
