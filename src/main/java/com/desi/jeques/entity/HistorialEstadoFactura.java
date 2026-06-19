@@ -11,7 +11,27 @@ public class HistorialEstadoFactura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    public Long getId() {
+		return id;
+	}
+
+
+	public EstadoFactura getEstado() {
+		return estado;
+	}
+
+
+	public LocalDateTime getFechaHora() {
+		return fechaHora;
+	}
+
+
+	public Factura getFactura() {
+		return factura;
+	}
+
+
+	@Enumerated(EnumType.STRING)
     private EstadoFactura estado;
 
     private LocalDateTime fechaHora;
