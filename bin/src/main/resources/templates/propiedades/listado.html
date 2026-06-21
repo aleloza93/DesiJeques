@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Propiedades</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        table, th, td { border: 1px solid #ccc; }
+        th, td { padding: 10px; text-align: left; }
+        .btn { padding: 8px 12px; text-decoration: none; border: 1px solid #333; margin-right: 5px; }
+        .ok { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+
+<h1>Propiedades</h1>
+
+<p class="ok" th:if="${ok}" th:text="${ok}"></p>
+<p class="error" th:if="${error}" th:text="${error}"></p>
+
+<a th:href="@{/propiedades/nueva}" class="btn">Nueva Propiedad</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Dirección</th>
+        <th>Ciudad</th>
+        <th>Tipo</th>
+        <th>Ambientes</th>
+        <th>m²</th>
+        <th>Estado</th>
+        <th>Propietario</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="propiedad : ${propiedades}">
+        <td th:text="${propiedad.id}"></td>
+        <td th:text="${propiedad.direccion}"></td>
+        <td th:text="${propiedad.ciudad}"></td>
+        <td th:text="${propiedad.tipoPropiedad}"></td>
+        <td th:text="${propiedad.cantidadAmbientes}"></td>
+        <td th:text="${propiedad.metrosCuadrados}"></td>
+        <td th:text="${propiedad.estadoDisponibilidad}"></td>
+        <td th:text="${propiedad.propietario.nombreCompleto}"></td>
+        <td>
+            <a th:href="@{/propiedades/editar/{id}(id=${propiedad.id})}" class="btn">Editar</a>
+            <a th:href="@{/propiedades/eliminar/{id}(id=${propiedad.id})}" class="btn"
+               onclick="return confirm('¿Seguro que desea eliminar la propiedad?')">Eliminar</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
