@@ -1,37 +1,72 @@
 package com.desi.jeques.service.impl;
 
-import java.util.List;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.desi.jeques.entity.Contrato2;
 import com.desi.jeques.entity.Factura;
-import com.desi.jeques.repository.FacturaDAO;
+import com.desi.jeques.entity.HistorialEstadoFactura;
+import com.desi.jeques.repository.FacturaRepository;
+import com.desi.jeques.repository.HistorialEstadoFacturaRepository;
 import com.desi.jeques.service.FacturaService;
+import com.desi.jeques.utilidades.EstadoFactura;
 
 @Service
 public class FacturaServiceImpl implements FacturaService {
 	
 	@Autowired
-    private FacturaDAO facturaRepository;
+    private FacturaRepository facturaRepository;
 
-    public List<Factura> obtenerTodas() {
-        return facturaRepository.findByEliminadaFalse();
-    }
+    @Autowired
+    private Contrato2Service contratoService; // Aca deberia cambiar el Contrato2Service 
 
-    public Factura obtenerPorId(Long id) {
-        return facturaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
-    }
+    @Autowired
+    private HistorialEstadoFacturaRepository historialRepository;
+    
+    @Override
+    public Factura crearFactura(Long contratoId, String conceptoFacturado,
+    		LocalDate fechaEmision, LocalDate fechaVencimiento, BigDecimal importe) {
 
-    public Factura guardar(Factura factura) {
-        return facturaRepository.save(factura);
-    }
+        if (fechaVencimiento.isBefore(fechaEmision)) {
+            throw new IllegalArgumentException(
+                "La fecha de vencimiento debe ser igual o posterior a la de emisión");
+        }
 
-    // Eliminado lógico: no borra de la BD
-    public void eliminar(Long id) {
-        Factura f = obtenerPorId(id);
-        f.setEliminada(true);
-        facturaRepository.save(f);
+        if (importe.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("El importe debe ser positivo");
+        }
+        
+        Contrato2 contrato = contratoService.obtenerPorId(contratoId); // Aca deberia cambiar el Contrato2 
+
+        if (!contratoService.puedeFacturarse(contrato)) {
+            throw new IllegalStateException(
+                "No se puede crear una factura para este contrato en su estado actual");
+        }
+
+        Factura factura = new Factura();
+        factura.setContrato(contrato);
+        factura.setFechaEmision(fechaEmision);
+        factura.setFechaVencimiento(fechaVencimiento);
+        factura.setImporte(importe);
+        factura.setEstado(EstadoFactura.PENDIENTE);
+        factura.setEliminada(false);
+        factura.setConceptoFacturado(conceptoFacturado);    
+        
+   
+        Factura facturaGuardada = facturaRepository.save(factura);
+        
+        
+        
+        //y si muere la base de datos antes de esto ???
+        HistorialEstadoFactura historial = new HistorialEstadoFactura();
+        historial.setFactura(facturaGuardada);
+        historial.setEstado(EstadoFactura.PENDIENTE);
+        historial.setFechaHora(LocalDateTime.now());
+        historialRepository.save(historial);
+
+        return facturaGuardada;
     }
+   
 }

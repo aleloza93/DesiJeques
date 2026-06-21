@@ -8,12 +8,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface FacturaDAO extends JpaRepository<Factura, Long> {
+public interface FacturaRepository extends JpaRepository<Factura, Long> {
 	// Buscar facturas de un contrato específico
-    List<Factura> findByContratoId(Long contratoId);
-
-    // Buscar por estado
-    List<Factura> findByEstado(EstadoFactura estado);
+    List<Factura> findByContratoId(Long contratoId);    
 
     // Solo las no eliminadas
     List<Factura> findByEliminadaFalse();

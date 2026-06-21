@@ -1,0 +1,43 @@
+body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        p {
+            color: #444;
+            margin-bottom: 30px;
+        }
+        .contenedor {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .tarjeta {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            width: 220px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .tarjeta h2 {
+            margin-top: 0;
+        }
+        .tarjeta p {
+            min-height: 60px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            border: 1px solid #333;
+            text-decoration: none;
+            color: #000;
+            background: #fff;
+        }
+        .pendiente {
+            color: #666;
+            font-style: italic;
+        }
