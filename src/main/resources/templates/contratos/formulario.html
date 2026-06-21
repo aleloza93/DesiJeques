@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${modoEdicion} ? 'Editar Contrato' : 'Nuevo Contrato'"></title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        form { max-width: 700px; }
+        label { display: block; margin-top: 12px; }
+        input, select, textarea { width: 100%; padding: 8px; margin-top: 4px; }
+        .acciones { margin-top: 20px; }
+        .btn { padding: 8px 12px; text-decoration: none; border: 1px solid #333; margin-right: 5px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${modoEdicion} ? 'Editar Contrato' : 'Nuevo Contrato'"></h1>
+
+<p class="error" th:if="${error}" th:text="${error}"></p>
+
+<form th:action="@{/contratos/guardar}" th:object="${contrato}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="hidden" th:field="*{eliminado}">
+	
+	<label>Inquilino</label>
+	   <select th:field="*{inquilino.id}">
+	       <option value="">Seleccione...</option>
+	       <option th:each="persona : ${personas}"
+	               th:value="${persona.id}"
+	               th:text="${persona.nombreCompleto + ' - ' + persona.documento}">
+	       </option>
+	   </select>
+
+	
+    <label>Propiedad</label>
+	<select th:field="*{propiedad.id}">
+	       <option value="">Seleccione...</option>
+	       <option th:each="propiedad : ${propiedades}"
+	               th:value="${propiedad.id}"
+	               th:text="${propiedad.direccion + '(' + propiedad.ciudad + ')'}">
+	       </option>
+	   </select>
+
+   <label>Fecha de inicio</label>
+   <input type="date" th:field="*{fechaInicio}">
+	   	   
+	<label>Descripción</label>
+	<textarea th:field="*{descripcion}" rows="4"></textarea>
+
+    <label>Duración en meses</label>
+    <input type="number" th:field="*{duracionMeses}" min="1">
+
+	<label>Importe Mensual</label>
+	<input type="number"
+	       th:field="*{importeMensual}"
+	       step="0.01"
+	       min="0.01"
+	       required>
+		   
+ 	<label>Vencimiento mensual </label>
+		     <input type="number" th:field="*{diaVencimientoMensual}" min="1">
+
+    <label>Estado del contrato</label>
+    <select th:field="*{estado}">
+        <option value="borrador">Borrador</option>
+        <option value="activo">Activo</option>
+        <option value="finalizado">Finalizado</option>
+        <option value="rescindido">Rescindido</option>
+    </select>
+
+    
+
+    <div class="acciones">
+        <button type="submit" class="btn">Guardar</button>
+        <a th:href="@{/contratos}" class="btn">Volver</a>
+    </div>
+</form>
+
+</body>
+</html>

@@ -9,8 +9,7 @@ public class Propiedad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, length = 150)
+    
     private String direccion;
 
     @Column(nullable = false, length = 100)
