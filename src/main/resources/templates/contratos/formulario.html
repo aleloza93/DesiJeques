@@ -20,11 +20,15 @@
 <p class="error" th:if="${error}" th:text="${error}"></p>
 
 <form th:action="@{/contratos/guardar}" th:object="${contrato}" method="post">
-    <input type="hidden" th:field="*{id}">
-    <input type="hidden" th:field="*{eliminado}">
+	
+	<p th:if="${modoEdicion}">
+	    ID: <span th:text="*{id}"></span>
+	</p>
+    
+	<input type="hidden" th:field="*{eliminado}">
 	
 	<label>Inquilino</label>
-	   <select th:field="*{inquilino.id}">
+	   <select th:field="*{inquilino.id}" required>
 	       <option value="">Seleccione...</option>
 	       <option th:each="persona : ${personas}"
 	               th:value="${persona.id}"
@@ -34,7 +38,7 @@
 
 	
     <label>Propiedad</label>
-	<select th:field="*{propiedad.id}">
+	<select th:field="*{propiedad.id}" required>
 	       <option value="">Seleccione...</option>
 	       <option th:each="propiedad : ${propiedades}"
 	               th:value="${propiedad.id}"
@@ -43,26 +47,26 @@
 	   </select>
 
    <label>Fecha de inicio</label>
-   <input type="date" th:field="*{fechaInicio}">
+   <input type="date" th:field="*{fechaInicio}" required>
 	   	   
 	<label>Descripción</label>
-	<textarea th:field="*{descripcion}" rows="4"></textarea>
+	<textarea th:field="*{descripcion}" rows="4" required></textarea>
 
     <label>Duración en meses</label>
-    <input type="number" th:field="*{duracionMeses}" min="1">
+    <input type="number" th:field="*{duracionMeses}" min="1" required>
 
 	<label>Importe Mensual</label>
 	<input type="number"
 	       th:field="*{importeMensual}"
-	       step="0.01"
-	       min="0.01"
+	       min="1"
+	       step="1"
 	       required>
 		   
  	<label>Vencimiento mensual </label>
-		     <input type="number" th:field="*{diaVencimientoMensual}" min="1">
+		     <input type="number" th:field="*{diaVencimientoMensual}" min="1" required>
 
     <label>Estado del contrato</label>
-    <select th:field="*{estado}">
+    <select th:field="*{estado}" required>
         <option value="borrador">Borrador</option>
         <option value="activo">Activo</option>
         <option value="finalizado">Finalizado</option>
