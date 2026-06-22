@@ -11,6 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "contratos")
@@ -113,12 +116,16 @@ public void setEliminado(Boolean eliminado) {
     private LocalDate fechaInicio;
     
     @Column(nullable = false)
+    @Min(value = 1, message = "La duración debe ser un número positivo")
     private Integer duracionMeses;
     
     @Column(nullable = false)
+    @DecimalMin(value = "0.01", message = "El importe debe ser positivo")
     private BigDecimal importeMensual;
     
     @Column(nullable = false)
+    @Min(value = 1, message = "El día de vencimiento debe ser mayor o igual a 1")
+    @Max(value = 31, message = "El día de vencimiento debe ser menor o igual a 31")
     private Integer diaVencimientoMensual;
     
     @Column(nullable = false, length = 150)

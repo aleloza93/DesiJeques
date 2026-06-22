@@ -16,6 +16,8 @@ import com.desi.jeques.service.ContratoService;
 import com.desi.jeques.service.PersonaService;
 import com.desi.jeques.service.PropiedadService;
 
+import jakarta.validation.Valid;
+
 @Controller
 @RequestMapping("/contratos")
 public class ContratoController {
@@ -82,7 +84,7 @@ public class ContratoController {
 	    }
 
 	    @PostMapping("/guardar")
-	    public String guardar(@ModelAttribute Contrato contrato,
+	    public String guardar(@Valid @ModelAttribute Contrato contrato,
 	                          Model model,
 	                          RedirectAttributes redirectAttributes) {
 
@@ -112,9 +114,18 @@ public class ContratoController {
 	            return "contratos/formulario";
 	        }
 
-	
+	        try {
+	        	contratoService.guardar(contrato);
+	        } catch (RuntimeException e) {
 
-	        contratoService.guardar(contrato);
+	            model.addAttribute("error", e.getMessage());
+	            model.addAttribute("propiedades", propiedadService.listarActivas());
+	            model.addAttribute("personas", personaService.listarActivas());
+	            model.addAttribute("modoEdicion", contrato.getId() != null);
+
+	            return "contratos/formulario";
+	        }
+	        
 
 	        redirectAttributes.addFlashAttribute(
 	                "mensaje", "Contrato guardado correctamente.");
@@ -126,13 +137,21 @@ public class ContratoController {
 	    public String eliminar(@PathVariable Long id,
 	                           RedirectAttributes redirectAttributes) {
 
-	        contratoService.eliminarLogico(id);
+	    	 try {
 
-	        redirectAttributes.addFlashAttribute(
-	                "ok",
-	                "Contrato eliminado correctamente.");
+		        contratoService.eliminarLogico(id);
+	
+		        redirectAttributes.addFlashAttribute(
+		                "ok",
+		                "Contrato eliminado correctamente.");
+	    	 } catch (IllegalArgumentException e) {
 
-	        return "redirect:/contratos";
+	    	        redirectAttributes.addFlashAttribute(
+	    	                "error",
+	    	                e.getMessage());
+	    	}
+		    
+	    	return "redirect:/contratos";
 	    }
 	}
 	  
