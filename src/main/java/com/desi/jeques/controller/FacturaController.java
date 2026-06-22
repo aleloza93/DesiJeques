@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.desi.jeques.entity.Contrato2;
-import com.desi.jeques.entity.Factura;
+//import com.desi.jeques.entity.Factura;
 import com.desi.jeques.service.FacturaService;
 import com.desi.jeques.service.impl.Contrato2Service;
 
@@ -30,19 +30,35 @@ public class FacturaController {
     public String mostrarFormulario(Model modelo) {
         List<Contrato2> contratosActivos = contratoService.obtenerActivos(); //Cambiar ACA contratos2 y funcion de buscarActivos
         modelo.addAttribute("contratos", contratosActivos);
-        return "FacturaForm";
+        return "nuevaFactura";
     }
     
     @PostMapping("/nuevaFactura")
-    public String crearFactura(@ModelAttribute CrearFacturaRequest request, Model model) {
+    public String crearFactura(@ModelAttribute FacturaForm form, Model model) {
         facturaService.crearFactura(
-            request.getContratoId(),
-            request.getConceptoFacturado(),
-            request.getFechaEmision(),
-            request.getFechaVencimiento(),
-            request.getImporte()
+            form.getContratoId(),
+            form.getConceptoFacturado(),
+            form.getFechaEmision(),
+            form.getFechaVencimiento(),
+            form.getImporte()
         );
-        return "redirect:/factura";
+        return "redirect:/facturas";
     }
+    
+    
+    @GetMapping("/contratosParaFacturar")
+    public String mostrarContratosParaFacturar(Model model) {
+        List<Contrato2> contratosActivos = contratoService.obtenerActivos();        
+        
+        //System.out.println("Cantidad contratos: " + contratosActivos.size());
+
+        /*contratosActivos.forEach(c ->
+            System.out.println(c.getId() + " - " + c.getEstado())
+        );*/  
+        
+        model.addAttribute("contratos", contratosActivos);
+        return "contratosParaFacturar";
+    }
+    
     
 }

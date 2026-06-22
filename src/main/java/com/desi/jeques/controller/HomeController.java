@@ -8,7 +8,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String inicio() {
-        return "home";
+        return "index";
     }
 
     @GetMapping("/publicaciones")
@@ -23,6 +23,6 @@ public class HomeController {
 
     @GetMapping("/facturas")
     public String facturas() {
-        return "modulos/facturas";
+        return "/facturas";
     }
 }
