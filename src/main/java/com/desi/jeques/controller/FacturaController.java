@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.desi.jeques.entity.Contrato2;
+import com.desi.jeques.entity.Contrato;
+import com.desi.jeques.service.ContratoService;
 //import com.desi.jeques.entity.Factura;
 import com.desi.jeques.service.FacturaService;
-import com.desi.jeques.service.impl.Contrato2Service;
 
 @Controller
 @RequestMapping("/facturas")
@@ -23,12 +23,12 @@ public class FacturaController {
     private FacturaService facturaService;
     
     @Autowired
-    private Contrato2Service contratoService;
+    private ContratoService contratoService;
     
     
     @GetMapping("/nuevaFactura")
     public String mostrarFormulario(Model modelo) {
-        List<Contrato2> contratosActivos = contratoService.obtenerActivos(); //Cambiar ACA contratos2 y funcion de buscarActivos
+        List<Contrato> contratosActivos = contratoService.obtenerActivos(); //Cambiar ACA contratos2 y funcion de buscarActivos
         modelo.addAttribute("contratos", contratosActivos);
         return "nuevaFactura";
     }
@@ -48,7 +48,7 @@ public class FacturaController {
     
     @GetMapping("/contratosParaFacturar")
     public String mostrarContratosParaFacturar(Model model) {
-        List<Contrato2> contratosActivos = contratoService.obtenerActivos();        
+        List<Contrato> contratosActivos = contratoService.obtenerActivos();        
         
         //System.out.println("Cantidad contratos: " + contratosActivos.size());
 

@@ -55,7 +55,7 @@ public class Factura {
     public BigDecimal getInteres() {return interes;}
     public String getConceptoFacturado() {return conceptoFacturado;}
     
-    public Contrato2 getContrato() {//recordar cambiar aca cuando exista contrato
+    public Contrato getContrato() {
         return contrato;
     	}
     
@@ -73,7 +73,7 @@ public class Factura {
 	public void setInteres(BigDecimal interes) {this.interes = interes;}
 	public void setConceptoFacturado(String conceptoFacturado) {this.conceptoFacturado = conceptoFacturado;}
 	
-	public void setContrato(Contrato2 contrato) {//recordar cambiar aca cuando exista contrato
+	public void setContrato(Contrato contrato) {
 	    this.contrato = contrato;
 		}
 
@@ -85,7 +85,7 @@ public class Factura {
 	
     @ManyToOne
     @JoinColumn(name = "contrato_id")
-    private Contrato2 contrato; //recordar cambiar aca cuando exista contrato
+    private Contrato contrato; 
   
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL)
     private List<HistorialEstadoFactura> historialEstados;

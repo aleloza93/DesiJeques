@@ -5,11 +5,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.desi.jeques.entity.Contrato2;
+import com.desi.jeques.entity.Contrato;
 import com.desi.jeques.entity.Factura;
 import com.desi.jeques.entity.HistorialEstadoFactura;
 import com.desi.jeques.repository.FacturaRepository;
 import com.desi.jeques.repository.HistorialEstadoFacturaRepository;
+import com.desi.jeques.service.ContratoService;
 import com.desi.jeques.service.FacturaService;
 import com.desi.jeques.utilidades.EstadoFactura;
 
@@ -20,7 +21,7 @@ public class FacturaServiceImpl implements FacturaService {
     private FacturaRepository facturaRepository;
 
     @Autowired
-    private Contrato2Service contratoService; // Aca deberia cambiar el Contrato2Service 
+    private ContratoService contratoService;
 
     @Autowired
     private HistorialEstadoFacturaRepository historialRepository;
@@ -38,9 +39,9 @@ public class FacturaServiceImpl implements FacturaService {
             throw new IllegalArgumentException("El importe debe ser positivo");
         }
         
-        Contrato2 contrato = contratoService.obtenerPorId(contratoId); // Aca deberia cambiar el Contrato2 
+        Contrato contrato = contratoService.buscarPorId(contratoId); 
 
-        if (!contratoService.puedeFacturarse(contrato)) {
+        if (!contratoService.puedeFacturarse(contrato)) { //FALTA ESTA FUNCION EN CONTRATOSERVICE!!
             throw new IllegalStateException(
                 "No se puede crear una factura para este contrato en su estado actual");
         }
