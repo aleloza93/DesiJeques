@@ -16,10 +16,10 @@ public class HomeController {
         return "modulos/publicaciones";
     }
 
-    @GetMapping("/contratos")
+    /*@GetMapping("/contratos")
     public String contratos() {
         return "modulos/contratos";
-    }
+    }*/
 
     @GetMapping("/facturas")
     public String facturas() {

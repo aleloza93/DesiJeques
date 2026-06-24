@@ -39,6 +39,15 @@ public class ContratoServiceImpl  implements ContratoService{
 	public Contrato buscarPorId(Long id) {
 		return contratoRepository.findById(id).orElse(null);
 	}
+	
+	//Funcion para Colox
+	@Override
+	public boolean puedeFacturarse(Contrato contrato) {
+        if (contrato.getEliminado()) {
+            return false;
+        }
+        return "ACTIVO".equalsIgnoreCase(contrato.getEstado());
+    }
 
 	@Override
 	public Contrato guardar(Contrato contrato) {

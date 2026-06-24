@@ -134,10 +134,9 @@ public void setEliminado(Boolean eliminado) {
     @Column(nullable = false, length = 150)
     private String estado= "Activo";
     
-
-	@Column(nullable = false, length = 150)
-    private Boolean eliminado= false;
+    @Column(nullable = false, length = 150)
+    private Boolean eliminado= false;    
     
-
+   
 
 }

@@ -14,7 +14,7 @@
     </style>
 </head>
 <body>
-
+	<a th:href="@{/}" class="btn">Inicio</a>
 <h1 th:text="${modoEdicion} ? 'Editar Propiedad' : 'Nueva Propiedad'"></h1>
 
 <p class="error" th:if="${error}" th:text="${error}"></p>
@@ -71,4 +71,5 @@
 </form>
 
 </body>
+
 </html>

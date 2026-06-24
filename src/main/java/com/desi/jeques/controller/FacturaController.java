@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.desi.jeques.entity.Contrato;
+import com.desi.jeques.entity.Factura;
 import com.desi.jeques.service.ContratoService;
 //import com.desi.jeques.entity.Factura;
 import com.desi.jeques.service.FacturaService;
@@ -23,24 +25,28 @@ public class FacturaController {
     private FacturaService facturaService;
     
     @Autowired
-    private ContratoService contratoService;
-    
+    private ContratoService contratoService; 
+       
     
     @GetMapping("/nuevaFactura")
-    public String mostrarFormulario(Model modelo) {
-        List<Contrato> contratosActivos = contratoService.obtenerActivos(); //Cambiar ACA contratos2 y funcion de buscarActivos
-        modelo.addAttribute("contratos", contratosActivos);
+    public String mostrarFormulario(@RequestParam("contratoId") Long contratoId, Model modelo) {
+        Contrato contratoSeleccionado = contratoService.buscarPorId(contratoId);      
+        modelo.addAttribute("contrato", contratoSeleccionado);        
         return "nuevaFactura";
     }
     
     @PostMapping("/nuevaFactura")
-    public String crearFactura(@ModelAttribute FacturaForm form, Model model) {
+    public String crearFactura(@ModelAttribute Factura form, Model model) {
         facturaService.crearFactura(
-            form.getContratoId(),
+            form.getContrato().getId(),
             form.getConceptoFacturado(),
             form.getFechaEmision(),
             form.getFechaVencimiento(),
-            form.getImporte()
+            form.getImporte(),
+            form.getFechaPago(),
+            form.getMedio(),
+            form.getImportePagado(),
+            form.getInteres()
         );
         return "redirect:/facturas";
     }
@@ -48,7 +54,7 @@ public class FacturaController {
     
     @GetMapping("/contratosParaFacturar")
     public String mostrarContratosParaFacturar(Model model) {
-        List<Contrato> contratosActivos = contratoService.obtenerActivos();        
+        List<Contrato> contratosActivos = contratoService.listarContratosActivos();        
         
         //System.out.println("Cantidad contratos: " + contratosActivos.size());
 

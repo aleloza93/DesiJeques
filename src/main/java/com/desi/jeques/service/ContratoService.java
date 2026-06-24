@@ -9,6 +9,8 @@ public interface ContratoService {
     List<Contrato> listarContratosActivos();
 
     Contrato buscarPorId(Long id);
+    
+    boolean puedeFacturarse(Contrato contrato);
 
     Contrato guardar(Contrato contrato);
 

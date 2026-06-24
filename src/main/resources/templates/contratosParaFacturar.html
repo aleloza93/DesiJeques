@@ -1,33 +1,55 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Contratos para Facturar</title>
+    <title>Contratos para Facturar - DesiJeques</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 
-    <h1>Contratos disponibles para facturar</h1>
+    <div class="table-container">
+        <h1>Contratos disponibles para facturar</h1>
+        <p>Seleccione un contrato activo de la lista para emitir una nueva factura.</p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Estado</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="contrato : ${contratos}">
-                <td th:text="${contrato.id}"></td>
-                <td th:text="${contrato.estado}"></td>
-                <td>
-                    <a th:href="@{/facturas/nuevaFactura(contratoId=${contrato.id})}">
-                        Facturar
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <table class="tabla-listado">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Inquilino</th>
+                    <th>Vencimiento (Día)</th>
+                    <th>Estado</th>
+                    <th>Importe Mensual</th>
+                    <th class="text-center">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(contratos)}">
+                    <td colspan="6" class="text-center sin-datos">No hay contratos disponibles para facturar en este momento.</td>
+                </tr>
+                
+                <tr th:each="contrato : ${contratos}">
+                    <td th:text="${contrato.id}" class="fw-bold"></td>
+                    <td th:text="${contrato.inquilino}"></td>
+                    <td th:text="${contrato.diaVencimientoMensual}" class="text-center"></td>
+                    <td>
+                        <span th:text="${contrato.estado}" 
+                              th:class="${contrato.estado == 'ACTIVO' ? 'badge badge-activo' : 'badge badge-inactivo'}">
+                        </span>
+                    </td>
+                    <td th:text="${'$' + contrato.importeMensual}"></td>
+                    <td class="text-center">
+                        <a th:href="@{/facturas/nuevaFactura(contratoId=${contrato.id})}" class="btn-action">
+                            Facturar
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="table-actions">
+            <a th:href="@{/}" class="btn-back">Volver al Inicio</a>
+        </div>
+    </div>
 
 </body>
 </html>

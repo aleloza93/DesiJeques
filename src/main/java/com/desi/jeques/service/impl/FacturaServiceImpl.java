@@ -13,6 +13,9 @@ import com.desi.jeques.repository.HistorialEstadoFacturaRepository;
 import com.desi.jeques.service.ContratoService;
 import com.desi.jeques.service.FacturaService;
 import com.desi.jeques.utilidades.EstadoFactura;
+import com.desi.jeques.utilidades.MedioPago;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class FacturaServiceImpl implements FacturaService {
@@ -27,21 +30,33 @@ public class FacturaServiceImpl implements FacturaService {
     private HistorialEstadoFacturaRepository historialRepository;
     
     @Override
+    @Transactional
     public Factura crearFactura(Long contratoId, String conceptoFacturado,
-    		LocalDate fechaEmision, LocalDate fechaVencimiento, BigDecimal importe) {
-
+            LocalDate fechaEmision, LocalDate fechaVencimiento, BigDecimal importe,
+            LocalDate fechaPago, MedioPago medioPago, BigDecimal importePagado, BigDecimal interesPagado) {
+    	
+    	//Verifica fecha de vencimiento sobre la fecha de emision si es valido
         if (fechaVencimiento.isBefore(fechaEmision)) {
             throw new IllegalArgumentException(
                 "La fecha de vencimiento debe ser igual o posterior a la de emisión");
         }
-
+        
+        //Verifica que el importe no sea >=0
         if (importe.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El importe debe ser positivo");
         }
         
+        if (importePagado != null && importePagado.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("El importe pagado no puede ser negativo");
+        }
+        
+        if (interesPagado != null && interesPagado.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("El interés pagado no puede ser negativo");
+        }
+        
         Contrato contrato = contratoService.buscarPorId(contratoId); 
 
-        if (!contratoService.puedeFacturarse(contrato)) { //FALTA ESTA FUNCION EN CONTRATOSERVICE!!
+        if (!contratoService.puedeFacturarse(contrato)) {
             throw new IllegalStateException(
                 "No se puede crear una factura para este contrato en su estado actual");
         }
@@ -50,17 +65,20 @@ public class FacturaServiceImpl implements FacturaService {
         factura.setContrato(contrato);
         factura.setFechaEmision(fechaEmision);
         factura.setFechaVencimiento(fechaVencimiento);
-        factura.setImporte(importe);
+        factura.setImporte(contrato.getImporteMensual());
         factura.setEstado(EstadoFactura.PENDIENTE);
         factura.setEliminada(false);
-        factura.setConceptoFacturado(conceptoFacturado);    
-        
+        factura.setConceptoFacturado(conceptoFacturado);
+        factura.setFechaPago(fechaPago);
+        factura.setMedio(medioPago);
+        factura.setImportePagado(importePagado);
+        factura.setInteres(interesPagado);
    
         Factura facturaGuardada = facturaRepository.save(factura);
         
         
         
-        //y si muere la base de datos antes de esto ???
+        //y si muere la base de datos antes de esto ???	
         HistorialEstadoFactura historial = new HistorialEstadoFactura();
         historial.setFactura(facturaGuardada);
         historial.setEstado(EstadoFactura.PENDIENTE);
