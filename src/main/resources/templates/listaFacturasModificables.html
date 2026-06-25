@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modificar Facturas - DesiJeques</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+    <div class="table-container">
+        <h1>Modificar Facturas</h1>
+        <p>Seleccione una factura en estado pendiente o vencida para editar sus datos o registrar su pago.</p>
+
+        <table class="tabla-listado">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Inquilino</th>
+                    <th>Concepto</th>
+                    <th>Vencimiento</th>
+                    <th>Estado</th>
+                    <th>Importe</th>
+                    <th class="text-center">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(facturas)}">
+                    <td colspan="7" class="text-center sin-datos">No hay facturas modificables disponibles en este momento.</td>
+                </tr>
+                
+                <tr th:each="f : ${facturas}">
+                    <td th:text="${f.id}" class="fw-bold"></td>
+                    <td th:text="${f.contrato.inquilino}"></td>
+                    <td th:text="${f.conceptoFacturado}"></td>
+                    <td th:text="${f.fechaVencimiento}"></td>
+                    <td>
+                        <span th:text="${f.estado}" 
+                              th:class="${f.estado == 'PENDIENTE' ? 'badge badge-activo' : 'badge badge-inactivo'}">
+                        </span>
+                    </td>
+                    <td th:text="${'$' + f.importe}"></td>
+                    <td class="text-center">
+                        <a th:href="@{/facturas/modificarFactura/{id}(id=${f.id})}" class="btn-action">
+                            Editar
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="table-actions">
+            <a th:href="@{/}" class="btn-back">Volver al Inicio</a>
+        </div>
+    </div>
+
+</body>
+</html>

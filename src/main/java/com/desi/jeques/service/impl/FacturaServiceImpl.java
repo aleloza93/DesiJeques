@@ -3,6 +3,8 @@ package com.desi.jeques.service.impl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.desi.jeques.entity.Contrato;
@@ -29,11 +31,20 @@ public class FacturaServiceImpl implements FacturaService {
     @Autowired
     private HistorialEstadoFacturaRepository historialRepository;
     
+    
+    
+    /***************CREAR FACTURA***************/
     @Override
     @Transactional
-    public Factura crearFactura(Long contratoId, String conceptoFacturado,
-            LocalDate fechaEmision, LocalDate fechaVencimiento, BigDecimal importe,
-            LocalDate fechaPago, MedioPago medioPago, BigDecimal importePagado, BigDecimal interesPagado) {
+    public Factura crearFactura(Long contratoId,
+    		String conceptoFacturado,
+            LocalDate fechaEmision,
+            LocalDate fechaVencimiento,
+            BigDecimal importe,
+            LocalDate fechaPago,
+            MedioPago medioPago,
+            BigDecimal importePagado,
+            BigDecimal interesPagado) {
     	
     	//Verifica fecha de vencimiento sobre la fecha de emision si es valido
         if (fechaVencimiento.isBefore(fechaEmision)) {
@@ -87,5 +98,119 @@ public class FacturaServiceImpl implements FacturaService {
 
         return facturaGuardada;
     }
+    
+    
+    /***************MODIFICAR FACTURA***************/
+    
+    @Override
+    public List<Factura> listarModificables() {
+        return facturaRepository.findByEstadoInAndEliminadaFalse(
+            List.of(EstadoFactura.PENDIENTE, EstadoFactura.VENCIDA)
+        );
+    }
+    
+    @Override
+    public Factura obtenerPorId(Long id) {
+        return facturaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Factura no encontrada con id: " + id));
+    }
+    
+    @Override
+    @Transactional
+    public Factura modificarFactura(Long id, EstadoFactura nuevoEstado,
+                                     String conceptoFacturado,
+                                     LocalDate fechaEmision,
+                                     LocalDate fechaVencimiento,
+                                     BigDecimal importe,
+                                     LocalDate fechaPago,
+                                     MedioPago medioPago,
+                                     BigDecimal importePagado,
+                                     BigDecimal interes) {
+
+        
+        Factura factura = obtenerPorId(id);
+
+        //Verifico si le quieren cambiar el estado anulada o pagada
+        if (factura.getEstado() == EstadoFactura.ANULADA) {
+            throw new IllegalStateException("No se puede modificar una factura anulada");
+        }
+        if (factura.getEstado() == EstadoFactura.PAGADA) {
+            throw new IllegalStateException("No se puede modificar una factura pagada");
+        }
+        
+        //Verificacion de fecha 
+        if (fechaVencimiento.isBefore(fechaEmision)) {
+            throw new IllegalArgumentException(
+                "La fecha de vencimiento debe ser igual o posterior a la de emisión");
+        }
+
+        //Verifico que sea valido el cambio de estado
+        try{
+        	validarTransicionEstado(factura.getEstado(), nuevoEstado);
+        }
+        catch (IllegalStateException e) {
+                System.out.print("Transición de estado inválida");
+        	
+        }
+
+        
+
+        // Verifico que si cambia a PAGADA se ingresen los datos de pago
+        if (nuevoEstado == EstadoFactura.PAGADA) {            
+            if (fechaPago == null) {
+                throw new IllegalArgumentException("La fecha de pago es obligatoria");
+            }
+            if (medioPago == null) {
+                throw new IllegalArgumentException("El medio de pago es obligatorio");
+            }
+            if (importePagado == null || importePagado.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("El importe pagado debe ser positivo");
+            }
+            factura.setFechaPago(fechaPago);
+            factura.setMedio(medioPago);
+            factura.setImportePagado(importePagado);
+            factura.setInteres(interes);
+        } else {            
+            factura.setFechaPago(null);
+            factura.setMedio(null);
+            factura.setImportePagado(null);
+            factura.setInteres(null);
+        }
+
+        // Si esta VENCIDA no se modifica el importe
+        if (nuevoEstado != EstadoFactura.VENCIDA) {
+            factura.setImporte(importe);
+        }
+
+        // Actualizacion de datos y a la base de datos
+        EstadoFactura estadoAnterior = factura.getEstado();
+        factura.setConceptoFacturado(conceptoFacturado);
+        factura.setFechaEmision(fechaEmision);
+        factura.setFechaVencimiento(fechaVencimiento);
+        factura.setEstado(nuevoEstado);
+
+        Factura facturaGuardada = facturaRepository.save(factura);
+
+        // Si cambia el estado, el historial de factura registra
+        if (estadoAnterior != nuevoEstado) {
+            HistorialEstadoFactura historial = new HistorialEstadoFactura();
+            historial.setFactura(facturaGuardada);
+            historial.setEstado(nuevoEstado);
+            historial.setFechaHora(LocalDateTime.now());
+            historialRepository.save(historial);
+        }
+
+        return facturaGuardada;
+    }
+    
+    public boolean validarTransicionEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado) {
+        if (estadoActual == nuevoEstado) return true;
+        if (estadoActual == EstadoFactura.VENCIDA && nuevoEstado == EstadoFactura.PAGADA) return true;
+        return false;
+    }
+    
+    /***************ELIMINAR FACTURA***************/
+    
+    /***************VER FACTURA***************/
    
 }

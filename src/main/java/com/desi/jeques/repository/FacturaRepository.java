@@ -2,6 +2,7 @@ package com.desi.jeques.repository;
 
 import org.springframework.stereotype.Repository;
 import com.desi.jeques.entity.Factura;
+import com.desi.jeques.utilidades.EstadoFactura;
 
 import java.util.List;
 
@@ -14,4 +15,7 @@ public interface FacturaRepository extends JpaRepository<Factura, Long> {
 
     // Solo las no eliminadas
     List<Factura> findByEliminadaFalse();
+    
+    //Para buscar las facturas modificables
+    List<Factura> findByEstadoInAndEliminadaFalse(List<EstadoFactura> estados);
 }
