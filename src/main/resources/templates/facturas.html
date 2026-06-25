@@ -2,42 +2,62 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Facturas</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}" />
-		
-</head>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo Facturas - DesiJeques</title>    
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-	<a th:href="@{/}" class="btn">Volver al Inicio</a>
-<h1>Facturas</h1>
-<p>Facturación en vivo y en directo para el Ale que lo mira por TV</p>
 
-<div class="contenedor">
-    <div class="tarjeta">
-        <h2>Crear Factura</h2>
-        <p>Facturación a Contratos Activos</p>
-        <a th:href="@{/facturas/contratosParaFacturar}" class="btn">Ingresar</a>
-    </div>
+    <div class="dashboard-layout">
+        
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>DesiJeques</h2>
+                <span>Gestión Inmobiliaria</span>
+            </div>
+            <nav class="sidebar-menu">
+                <a th:href="@{/}" class="menu-item">🏠 Inicio</a>
+                <a th:href="@{/propiedades}" class="menu-item">🏢 Propiedades</a>
+                <a th:href="@{/publicaciones}" class="menu-item">📢 Publicaciones</a>
+                <a th:href="@{/contratos}" class="menu-item">📜 Contratos</a>
+                <a th:href="@{/facturas}" class="menu-item active">💵 Facturas</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Sprint Actual v1.2</p>
+            </div>
+        </aside>
 
-    <div class="tarjeta">
-        <h2>Modificar Factura</h2>
-        <p class="pendiente">Editar Facturas por algun problema o cambio necesario</p>
-        <a th:href="@{facturas/modificarFactura}" class="btn">Ingresar</a>
-    </div>
+        <main class="main-content">
+            <header class="main-header">
+                <div>
+                    <h1>Módulo de Facturación</h1>
+                    <p>Administración de comprobantes, cobros y estados de cuenta.</p>
+                </div>
+            </header>
 
-    <div class="tarjeta">
-        <h2>Eliminar Factura</h2>
-        <p class="pendiente">Eliminar una factura en particular</p>
-        <a th:href="@{facturas/eliminarFactura}" class="btn">Ingresar</a>
-    </div>
+            <div class="contenedor">
+                
+                <div class="tarjeta">
+                    <div class="tarjeta-icon">➕💵</div>
+                    <h2>Crear Factura</h2>
+                    <p>Emitir nuevos comprobantes seleccionando contratos que se encuentren activos en el sistema.</p>
+                    <a th:href="@{/facturas/contratosParaFacturar}" class="btn-dashboard">Ingresar</a>
+                </div>
 
-    <div class="tarjeta">
-        <h2>Ver Facturas</h2>
-        <p class="pendiente">Ver Todas las facturas</p>
-        <a th:href="@{facturas/verFacturas}" class="btn">Ingresar</a>
+                <div class="tarjeta">
+                    <div class="tarjeta-icon">🔍📋</div>
+                    <h2>Ver Facturas</h2>
+                    <p>Visualizar el histórico completo de facturas emitidas, estados de pago y vencimientos generales.</p>
+                    <a th:href="@{/facturas/listaFacturas}" class="btn-dashboard">Ingresar</a>
+                </div>
+                
+            </div>
+
+            <div style="margin-top: 40px;">
+                <a th:href="@{/}" class="btn-back">⬅ Volver al Inicio</a>
+            </div>
+        </main>
     </div>
-</div>
 
 </body>
 </html>

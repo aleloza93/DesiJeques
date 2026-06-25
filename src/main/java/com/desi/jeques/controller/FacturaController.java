@@ -1,5 +1,6 @@
 package com.desi.jeques.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.desi.jeques.entity.Contrato;
 import com.desi.jeques.entity.Factura;
@@ -33,6 +35,7 @@ public class FacturaController {
     
     
     /*****************Historia de Usuario 4.1: CREAR FACTURA*****************/
+    
     @GetMapping("/nuevaFactura")
     public String mostrarFormulario(@RequestParam Long contratoId, Model modelo) {
         Contrato contratoSeleccionado = contratoService.buscarPorId(contratoId);      
@@ -90,9 +93,7 @@ public class FacturaController {
 
     // Procesa el formulario de edición
     @PostMapping("/modificarFactura/{id}")
-    public String procesarModificacion(@PathVariable Long id,
-                                        @ModelAttribute Factura form,
-                                        Model model) {
+    public String procesarModificacion(@PathVariable Long id, @ModelAttribute Factura form, Model model) {
         facturaService.modificarFactura(
             id,
             form.getEstado(),
@@ -109,6 +110,70 @@ public class FacturaController {
     }
     /*****************Historia de Usuario 4.3: ELIMINAR FACTURA*****************/
     
-    /*****************Historia de Usuario 4.4: VER FACTURAS*****************/
+    @GetMapping("/eliminarFactura")
+    public String facturasEliminables(Model model) {
+    	model.addAttribute("facturas", facturaService.listarEliminables());   
+    	return "eliminarFactura";
+    }
     
+   /*@PostMapping("/eliminarFactura")
+    public String procesarEliminarFactura(@RequestParam Long id) {
+    	facturaService.eliminarFactura(id);
+
+        return "redirect:/facturas/eliminarFactura";
+    }*/
+    
+    @PostMapping("/eliminarFactura")
+    public String procesarEliminarFactura(
+            @RequestParam Long id,
+            RedirectAttributes redirectAttributes) {
+
+        boolean eliminado = facturaService.eliminarFactura(id);
+
+        if (eliminado) {
+            redirectAttributes.addFlashAttribute(
+                "mensaje",
+                "Factura eliminada correctamente");
+        } else {
+            redirectAttributes.addFlashAttribute(
+                "error",
+                "La factura no puede ser eliminada");
+        }
+
+        return "redirect:/facturas/listaFacturas";
+    }
+    
+    /*****************Historia de Usuario 4.4: VER FACTURAS*****************/
+   /* @GetMapping("/listaFacturas")
+    public String listarFacturas(Model model) {
+
+        List<Factura> facturas = facturaService.facturasNoEliminadas();
+
+        model.addAttribute("facturas", facturas);
+
+        return "listaFacturas";
+    }*/
+    
+    @GetMapping("/listaFacturas")
+    public String listarFacturas(
+            @RequestParam(required = false) Long contratoId,
+            @RequestParam(required = false) Long propiedadId,
+            @RequestParam(required = false) Long inquilinoId,
+            @RequestParam(required = false) EstadoFactura estado,
+            @RequestParam(required = false) LocalDate fechaDesde,
+            @RequestParam(required = false) LocalDate fechaHasta,
+            Model model) {
+
+        List<Factura> facturas = facturaService.filtrar(
+                contratoId,
+                propiedadId,
+                inquilinoId,
+                estado,
+                fechaDesde,
+                fechaHasta);
+
+        model.addAttribute("facturas", facturas);
+
+        return "listaFacturas";
+    }
 }

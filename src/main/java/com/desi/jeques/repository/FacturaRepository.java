@@ -18,4 +18,7 @@ public interface FacturaRepository extends JpaRepository<Factura, Long> {
     
     //Para buscar las facturas modificables
     List<Factura> findByEstadoInAndEliminadaFalse(List<EstadoFactura> estados);
+    
+    //Para buscar las no pagadas
+    List<Factura> findByEstadoNotInAndEliminadaFalse(List<EstadoFactura> estado);
 }

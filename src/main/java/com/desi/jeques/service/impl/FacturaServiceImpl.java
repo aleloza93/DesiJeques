@@ -3,6 +3,7 @@ package com.desi.jeques.service.impl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -203,6 +204,7 @@ public class FacturaServiceImpl implements FacturaService {
         return facturaGuardada;
     }
     
+    //Se chequea el estado de ambas facturas
     public boolean validarTransicionEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado) {
         if (estadoActual == nuevoEstado) return true;
         if (estadoActual == EstadoFactura.VENCIDA && nuevoEstado == EstadoFactura.PAGADA) return true;
@@ -210,7 +212,95 @@ public class FacturaServiceImpl implements FacturaService {
     }
     
     /***************ELIMINAR FACTURA***************/
+    @Override
+    public List<Factura> listarEliminables() {
+        return facturaRepository.findByEstadoNotInAndEliminadaFalse(List.of(EstadoFactura.PAGADA));
+    } 
+    
+    @Override
+    @Transactional
+    public boolean eliminarFactura(Long id) {
+    	Factura factura = obtenerPorId(id);
+    	
+    	if (factura == null) return false;
+
+        if (factura.isEliminada()) return false;
+    	
+    	if(factura.getEstado() == EstadoFactura.PAGADA) {
+    		System.out.print("Esta queriendo eliminar una factura PAGADA, no deberia hacer eso"); // ver error aca
+    		return false;
+    	}
+    	
+    	factura.setEliminada(true);
+    	
+    	facturaRepository.save(factura);
+    	
+    	return true;
+    }
     
     /***************VER FACTURA***************/
    
+    public List<Factura> facturasNoEliminadas(){
+    	return facturaRepository.findByEliminadaFalse();
+    }
+    
+    public List<Factura> filtrar(
+            Long contratoId,
+            Long propiedadId,
+            Long inquilinoId,
+            EstadoFactura estado,
+            LocalDate fechaDesde,
+            LocalDate fechaHasta) {
+
+        List<Factura> facturas = facturaRepository.findByEliminadaFalse();
+        
+        List<Factura> listaFiltrada = new ArrayList<>();
+        
+        for(Factura factura : facturas) {
+        	boolean bandera = true;
+        	
+        	if (contratoId != null) {
+                if (!factura.getContrato().getId().equals(contratoId)) {
+                	bandera = false;
+                }
+            }
+        	
+        	if (propiedadId != null) {
+                if (!factura.getContrato().getPropiedad().getId().equals(propiedadId)) {
+                	bandera = false;
+                }
+            }
+        	
+        	if (inquilinoId != null) {
+                if (!factura.getContrato().getInquilino().getId().equals(inquilinoId)) {
+                    bandera = false;
+                }
+            }
+        	
+        	if (estado != null) {
+                if (factura.getEstado() != estado) {
+                	bandera = false;
+                }
+            }
+        	
+        	if (fechaDesde != null) {
+                if (factura.getFechaVencimiento().isBefore(fechaDesde)) {
+                	bandera = false;
+                }
+            }
+        	
+        	if (fechaHasta != null) {
+                if (factura.getFechaVencimiento().isAfter(fechaHasta)) {
+                	bandera = false;
+                }
+            }
+        	
+        	if (bandera) {
+        		listaFiltrada.add(factura);
+            }
+        	
+        }
+        
+        return listaFiltrada;
+    }
 }

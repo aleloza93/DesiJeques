@@ -37,6 +37,19 @@ public interface FacturaService {
             BigDecimal interes);
     
     boolean validarTransicionEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado);
-
+    
+    
+    List<Factura> listarEliminables();
+    
+    boolean eliminarFactura(Long id);
+    
+    List<Factura> facturasNoEliminadas();
+    
+    List<Factura> filtrar(Long contratoId,
+    		Long propiedadId,
+            Long inquilinoId,
+            EstadoFactura estado,
+            LocalDate fechaDesde,
+            LocalDate fechaHasta);
 
 }

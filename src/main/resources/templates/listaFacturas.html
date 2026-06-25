@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Facturas - DesiJeques</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>DesiJeques</h2>
+                <span>Gestión Inmobiliaria</span>
+            </div>
+            <nav class="sidebar-menu">
+                <a th:href="@{/}" class="menu-item">🏠 Inicio</a>
+                <a th:href="@{/propiedades}" class="menu-item">🏢 Propiedades</a>
+                <a th:href="@{/publicaciones}" class="menu-item">📢 Publicaciones</a>
+                <a th:href="@{/contratos}" class="menu-item">📜 Contratos</a>
+                <a th:href="@{/facturas}" class="menu-item active">💵 Facturas</a>
+            </nav>            
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <div>
+                    <h1>Listado General de Facturas</h1>
+                    <p>Búsqueda, filtrado avanzado y gestión directa de comprobantes emitidos.</p>
+                </div>
+            </header>
+
+			<div class="form-container" style="max-width: 100%; margin: 0 0 24px 0; padding: 20px;">
+			    <form th:action="@{/facturas/listaFacturas}" method="get" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+			                    
+			      	<div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100px;">
+						<label for="contratoId" style="font-size: 0.85em; margin-bottom: 4px;">ID Contrato</label>
+			        	<input type="number" id="contratoId" name="contratoId" th:value="${param.contratoId}" style="padding: 8px;" />
+			        </div>
+					
+					<div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 120px;">
+						<label for="propiedadId" style="font-size: 0.85em; margin-bottom: 4px;">ID Propiedad</label>
+						<input type="number" id="propiedadId" name="propiedadId" th:value="${param.propiedadId}" style="padding: 8px;" />
+					</div>
+					
+					<div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 120px;">
+						<label for="inquilinoId" style="font-size: 0.85em; margin-bottom: 4px;">ID Inquilino</label>
+						<input type="number" id="inquilinoId" name="inquilinoId" th:value="${param.inquilinoId}" style="padding: 8px;" />
+					</div>								
+
+			       <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 130px;">
+			             <label for="estado" style="font-size: 0.85em; margin-bottom: 4px;">Estado</label>
+			             <select id="estado" name="estado" style="padding: 8px;">
+			             	<option value="">Todos</option>
+			                <option value="PENDIENTE" th:selected="${param.estado == 'PENDIENTE'}">Pendiente</option>
+			                <option value="PAGADA" th:selected="${param.estado == 'PAGADA'}">Pagada</option>
+			                <option value="VENCIDA" th:selected="${param.estado == 'VENCIDA'}">Vencida</option>
+			                <option value="ANULADA" th:selected="${param.estado == 'ANULADA'}">Anulada</option>
+			             </select>
+			      	</div>
+
+			        <div class="form-group" style="margin-bottom: 0; flex: 1.2; min-width: 140px;">
+			             <label for="fechaDesde" style="font-size: 0.85em; margin-bottom: 4px;">Vence Desde</label>
+			             <input type="date" id="fechaDesde" name="fechaDesde" th:value="${param.fechaDesde}" style="padding: 8px;" />
+			        </div>
+
+			        <div class="form-group" style="margin-bottom: 0; flex: 1.2; min-width: 140px;">
+			              <label for="fechaHasta" style="font-size: 0.85em; margin-bottom: 4px;">Vence Hasta</label>
+			              <input type="date" id="fechaHasta" name="fechaHasta" th:value="${param.fechaHasta}" style="padding: 8px;" />
+			        </div>
+
+			        <div style="margin-bottom: 0;">
+			               <button type="submit" class="btn-submit" style="padding: 10px 20px; font-size: 0.9em; height: 40px; width: auto;">🔍 Filtrar</button>
+			         </div>
+			     </form>
+			 </div>
+
+            <div class="table-container" style="max-width: 100%; margin: 0; padding: 24px;">
+                <table class="tabla-listado">
+                    <thead>
+                        <tr>
+                            <th>Nro. Factura</th>
+                            <th>Contrato</th>
+                            <th>Propiedad</th>
+                            <th>Inquilino</th>
+                            <th>Emisión</th>
+                            <th>Vencimiento</th>
+                            <th>Importe</th>
+                            <th>Estado</th>
+                            <th class="text-center" colspan="2">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(facturas)}">
+                            <td colspan="10" class="text-center sin-datos">
+                                ❌ No se encontraron facturas que coincidan con los filtros aplicados.
+                            </td>
+                        </tr>
+                        
+                        <tr th:each="factura : ${facturas}">
+                            <td th:text="${factura.id}" class="fw-bold"></td>
+                            <td th:text="${'#' + factura.contrato.id}"></td>
+							<td>
+							    <span th:text="${factura.contrato.propiedad.direccion}"></span>
+							    <small style="color: #64748b; font-size: 0.85em;" th:text="${' (ID: ' + factura.contrato.propiedad.id + ')'}"></small>
+							</td>
+							<td>
+							    <span th:text="${factura.contrato.inquilino.nombreCompleto}"></span>
+							    <small style="color: #64748b; font-size: 0.85em;" th:text="${' (ID: ' + factura.contrato.inquilino.id + ')'}"></small>
+							</td>
+                            <td th:text="${factura.fechaEmision != null ? #temporals.format(factura.fechaEmision, 'dd/MM/yyyy') : '-'}"></td>
+                            <td th:text="${factura.fechaVencimiento != null ? #temporals.format(factura.fechaVencimiento, 'dd/MM/yyyy') : '-'}"></td>
+                            <td th:text="${'$' + factura.importe}" class="fw-bold"></td>
+                            <td>
+                                <span th:text="${factura.estado}" 
+                                      th:class="${factura.estado == 'PAGADA' ? 'badge badge-activo' : 
+                                                (factura.estado == 'ANULADA' ? 'badge badge-inactivo' : 
+                                                (factura.estado == 'PENDIENTE' ? 'badge badge-pendiente-info' : 'badge badge-inactivo'))}">
+                                </span>
+                            </td>
+                            
+							<td class="text-center" style="width: 80px; padding-right: 4px;">
+							    
+							    <a th:if="${#strings.toString(factura.estado) != 'PAGADA' and #strings.toString(factura.estado) != 'ANULADA'}"
+							       th:href="@{/facturas/modificarFactura/{id}(id=${factura.id})}" 
+							       class="btn-action" 
+							       style="background-color: #475569;">
+							        MODIFICAR
+							    </a>
+
+							    <button th:if="${#strings.toString(factura.estado) == 'PAGADA' or #strings.toString(factura.estado) == 'ANULADA'}"
+							            type="button" 
+							            class="btn-disabled-action" 
+							            style="padding: 6px 12px; cursor: not-allowed;" 
+							            th:title="${'No se puede modificar una factura ' + #strings.toLowerCase(factura.estado)}" 
+							            disabled>
+										MODIFICAR
+							    </button>
+							</td>
+
+							<td class="text-center" style="width: 80px; padding-left: 4px;">
+							    <form th:action="@{/facturas/eliminarFactura}" method="post" style="margin:0;">
+							        <input type="hidden" name="id" th:value="${factura.id}" />
+							        
+							        <button th:if="${#strings.toString(factura.estado) != 'PAGADA'}"
+							                type="submit" 
+							                class="btn-danger" 
+							                style="padding: 6px 12px;"
+							                onclick="return confirm('¿Está seguro que desea eliminar esta factura?');">
+							            ELIMINAR
+							        </button>
+
+							        <button th:if="${#strings.toString(factura.estado) == 'PAGADA'}"
+							                type="button" 
+							                class="btn-disabled-action" 
+							                style="padding: 6px 12px; cursor: not-allowed;" 
+							                title="No se puede eliminar una factura pagada" 
+							                disabled>
+							            ELIMINAR
+							        </button>
+							    </form>
+							</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="table-actions">
+                    <a th:href="@{/facturas}" class="btn-back">⬅ Volver a Facturas</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

@@ -417,3 +417,39 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
+/* Botón de eliminación destructiva (Rojo) */
+.btn-danger {
+    display: inline-block;
+    padding: 6px 14px;
+    background-color: rgb(177, 29, 29); /* Rojo alerta */
+    color: white;
+    border: none;
+    font-weight: bold;
+    font-size: 0.85em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.btn-danger:hover {
+    background-color: rgb(111, 17, 17);
+}
+
+/* Badge adicional para estados intermedios (Amarillo/Naranja sutil) */
+.badge-pendiente-info {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* Botón de acción deshabilitado en tablas  */
+.btn-disabled-action {
+    display: inline-block;
+    background-color: #cbd5e1; /* Gris claro */
+    color: #94a3b8;            /* Icono/Texto gris oscuro */
+    border: none;
+    font-size: 0.85em;
+    border-radius: 4px;
+    pointer-events: none;      /* Desactiva cualquier evento de clic */
+    opacity: 0.7;
+}
