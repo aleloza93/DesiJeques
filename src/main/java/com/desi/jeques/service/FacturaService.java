@@ -36,7 +36,7 @@ public interface FacturaService {
             BigDecimal importePagado,
             BigDecimal interes);
     
-    boolean validarTransicionEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado);
+    boolean validarCambioEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado);
     
     
     List<Factura> listarEliminables();

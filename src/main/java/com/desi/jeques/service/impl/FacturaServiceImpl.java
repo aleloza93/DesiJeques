@@ -146,15 +146,11 @@ public class FacturaServiceImpl implements FacturaService {
         }
 
         //Verifico que sea valido el cambio de estado
-        try{
-        	validarTransicionEstado(factura.getEstado(), nuevoEstado);
-        }
-        catch (IllegalStateException e) {
-                System.out.print("Transición de estado inválida");
-        	
-        }
+        if (!validarCambioEstado(factura.getEstado(), nuevoEstado)) {
+            throw new IllegalStateException(
+                "No se puede realizar ese cambio de estado de factura");
 
-        
+        }
 
         // Verifico que si cambia a PAGADA se ingresen los datos de pago
         if (nuevoEstado == EstadoFactura.PAGADA) {            
@@ -205,7 +201,7 @@ public class FacturaServiceImpl implements FacturaService {
     }
     
     //Se chequea el estado de ambas facturas
-    public boolean validarTransicionEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado) {
+    public boolean validarCambioEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado) {
         if (estadoActual == nuevoEstado) return true;
         if (estadoActual == EstadoFactura.VENCIDA && nuevoEstado == EstadoFactura.PAGADA) return true;
         return false;
@@ -220,9 +216,7 @@ public class FacturaServiceImpl implements FacturaService {
     @Override
     @Transactional
     public boolean eliminarFactura(Long id) {
-    	Factura factura = obtenerPorId(id);
-    	
-    	if (factura == null) return false;
+    	Factura factura = obtenerPorId(id);    	
 
         if (factura.isEliminada()) return false;
     	

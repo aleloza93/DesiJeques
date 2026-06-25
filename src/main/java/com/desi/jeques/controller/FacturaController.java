@@ -40,7 +40,7 @@ public class FacturaController {
     public String mostrarFormulario(@RequestParam Long contratoId, Model modelo) {
         Contrato contratoSeleccionado = contratoService.buscarPorId(contratoId);      
         modelo.addAttribute("contrato", contratoSeleccionado);        
-        return "nuevaFactura";
+        return "facturas/nuevaFactura";
     }
     
     @PostMapping("/nuevaFactura")
@@ -71,7 +71,7 @@ public class FacturaController {
         );*/  
         
         model.addAttribute("contratos", contratosActivos);
-        return "contratosParaFacturar";
+        return "facturas/contratosParaFacturar";
     }
     
     /*****************Historia de Usuario 4.2: MODIFICAR FACTURA*****************/
@@ -79,7 +79,7 @@ public class FacturaController {
     @GetMapping("/modificarFactura")
     public String mostrarListaModificables(Model model) {
         model.addAttribute("facturas", facturaService.listarModificables());
-        return "listaFacturasModificables";
+        return "facturas/listaFacturasModificables";
     }
 
     // Muestra el formulario de edición de una factura específica
@@ -88,7 +88,7 @@ public class FacturaController {
         model.addAttribute("factura", facturaService.obtenerPorId(id));
         model.addAttribute("estados", EstadoFactura.values());
         model.addAttribute("mediosPago", MedioPago.values());
-        return "modificarFactura";
+        return "facturas/modificarFactura";
     }
 
     // Procesa el formulario de edición
@@ -113,7 +113,7 @@ public class FacturaController {
     @GetMapping("/eliminarFactura")
     public String facturasEliminables(Model model) {
     	model.addAttribute("facturas", facturaService.listarEliminables());   
-    	return "eliminarFactura";
+    	return "facturas/eliminarFactura";
     }
     
    /*@PostMapping("/eliminarFactura")
@@ -151,7 +151,7 @@ public class FacturaController {
 
         model.addAttribute("facturas", facturas);
 
-        return "listaFacturas";
+        return "facturas/listaFacturas";
     }*/
     
     @GetMapping("/listaFacturas")
@@ -174,6 +174,6 @@ public class FacturaController {
 
         model.addAttribute("facturas", facturas);
 
-        return "listaFacturas";
+        return "facturas/listaFacturas";
     }
 }

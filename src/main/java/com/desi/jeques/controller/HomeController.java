@@ -23,6 +23,6 @@ public class HomeController {
 
     @GetMapping("/facturas")
     public String facturas() {
-        return "/facturas";
+        return "/facturas/facturas";
     }
 }

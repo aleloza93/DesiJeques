@@ -29,7 +29,7 @@
                 
                 <tr th:each="contrato : ${contratos}">
                     <td th:text="${contrato.id}" class="fw-bold"></td>
-                    <td th:text="${contrato.inquilino}"></td>
+                    <td th:text="${contrato.inquilino.nombreCompleto}"></td>
                     <td th:text="${contrato.diaVencimientoMensual}" class="text-center"></td>
                     <td>
                         <span th:text="${contrato.estado}" 
