@@ -20,7 +20,7 @@ public interface FacturaService {
             LocalDate fechaPago,
             MedioPago medioPago,
             BigDecimal importePagado,
-            BigDecimal interesPagado);
+            BigDecimal interesPagado) throws FacturaExcepcion;
 	
 	List<Factura> listarModificables();
 
@@ -42,7 +42,7 @@ public interface FacturaService {
     
     List<Factura> listarEliminables();
     
-    boolean eliminarFactura(Long id);
+    void eliminarFactura(Long id) throws FacturaExcepcion;
     
     List<Factura> facturasNoEliminadas();
     

@@ -44,47 +44,48 @@ public class FacturaController {
         modelo.addAttribute("contrato", contratoSeleccionado);        
         return "facturas/nuevaFactura";
     }
+       
     
     @PostMapping("/nuevaFactura")
-    public String crearFactura(@ModelAttribute Factura form, Model model) {
-        facturaService.crearFactura(
-            form.getContrato().getId(),
-            form.getConceptoFacturado(),
-            form.getFechaEmision(),
-            form.getFechaVencimiento(),
-            form.getImporte(),
-            form.getFechaPago(),
-            form.getMedio(),
-            form.getImportePagado(),
-            form.getInteres()
-        );
-        return "redirect:/facturas";
+    public String crearFactura(
+            @RequestParam Long contratoId,
+            @ModelAttribute Factura form,
+            Model model) {
+        try {
+            facturaService.crearFactura(
+                contratoId,
+                form.getConceptoFacturado(),
+                form.getFechaEmision(),
+                form.getFechaVencimiento(),
+                form.getImporte(),
+                form.getFechaPago(),
+                form.getMedio(),
+                form.getImportePagado(),
+                form.getInteres()
+            );
+            return "redirect:/facturas";
+
+        } catch (FacturaExcepcion e) {
+            if (e.getAtributo() == null) {
+                model.addAttribute("errorGlobal", e.getMessage());
+            } else {
+                model.addAttribute("error_" + e.getAtributo(), e.getMessage());
+            }            
+            model.addAttribute("contrato", contratoService.buscarPorId(contratoId));
+            return "facturas/nuevaFactura";
+        }
     }
     
     
     @GetMapping("/contratosParaFacturar")
     public String mostrarContratosParaFacturar(Model model) {
-        List<Contrato> contratosActivos = contratoService.listarContratosActivos();        
-        
-        //System.out.println("Cantidad contratos: " + contratosActivos.size());
-
-        /*contratosActivos.forEach(c ->
-            System.out.println(c.getId() + " - " + c.getEstado())
-        );*/  
-        
+        List<Contrato> contratosActivos = contratoService.obtenerActivos();   
         model.addAttribute("contratos", contratosActivos);
         return "facturas/contratosParaFacturar";
     }
     
-    /*****************Historia de Usuario 4.2: MODIFICAR FACTURA*****************/
- // Muestra la lista de facturas modificables
-    @GetMapping("/modificarFactura")
-    public String mostrarListaModificables(Model model) {
-        model.addAttribute("facturas", facturaService.listarModificables());
-        return "facturas/listaFacturasModificables";
-    }
+    /*****************Historia de Usuario 4.2: MODIFICAR FACTURA*****************/  
 
-    // Muestra el formulario de edición de una factura específica
     @GetMapping("/modificarFactura/{id}")
     public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
         model.addAttribute("factura", facturaService.obtenerPorId(id));
@@ -93,26 +94,10 @@ public class FacturaController {
         return "facturas/modificarFactura";
     }
 
-    // Procesa el formulario de edición
     @PostMapping("/modificarFactura/{id}")
-    public String procesarModificacion(@PathVariable Long id, @ModelAttribute Factura form, BindingResult result, Model model) {
-        /*facturaService.modificarFactura(
-            id,
-            form.getEstado(),
-            form.getConceptoFacturado(),
-            form.getFechaEmision(),
-            form.getFechaVencimiento(),
-            form.getImporte(),
-            form.getFechaPago(),
-            form.getMedio(),
-            form.getImportePagado(),
-            form.getInteres()
-        ) ;
-        return "redirect:/facturas";*/
+    public String procesarModificacion(@PathVariable Long id, @ModelAttribute Factura form, BindingResult result, Model model) {    	
     	
-    	
-    	if (result.hasErrors()) {
-            // errores de @Valid (si los agregás después)
+    	if (result.hasErrors()) {            
             model.addAttribute("estados", EstadoFactura.values());
             model.addAttribute("mediosPago", MedioPago.values());
             return "facturas/modificarFactura";
@@ -144,8 +129,7 @@ public class FacturaController {
             model.addAttribute("mediosPago", MedioPago.values());
             return "facturas/modificarFactura";
         }
-    }
-    	
+    }    	
     	
     
     /*****************Historia de Usuario 4.3: ELIMINAR FACTURA*****************/
@@ -154,45 +138,24 @@ public class FacturaController {
     public String facturasEliminables(Model model) {
     	model.addAttribute("facturas", facturaService.listarEliminables());   
     	return "facturas/eliminarFactura";
-    }
-    
-   /*@PostMapping("/eliminarFactura")
-    public String procesarEliminarFactura(@RequestParam Long id) {
-    	facturaService.eliminarFactura(id);
-
-        return "redirect:/facturas/eliminarFactura";
-    }*/
-    
+    }  
+   
     @PostMapping("/eliminarFactura")
     public String procesarEliminarFactura(
             @RequestParam Long id,
             RedirectAttributes redirectAttributes) {
 
-        boolean eliminado = facturaService.eliminarFactura(id);
-
-        if (eliminado) {
-            redirectAttributes.addFlashAttribute(
-                "mensaje",
-                "Factura eliminada correctamente");
-        } else {
-            redirectAttributes.addFlashAttribute(
-                "error",
-                "La factura no puede ser eliminada");
+        try {
+            facturaService.eliminarFactura(id);
+            redirectAttributes.addFlashAttribute("mensaje", "Factura eliminada correctamente.");
+        } catch (FacturaExcepcion e) {
+            redirectAttributes.addFlashAttribute("errorGlobal", e.getMessage());
         }
 
         return "redirect:/facturas/listaFacturas";
     }
     
-    /*****************Historia de Usuario 4.4: VER FACTURAS*****************/
-   /* @GetMapping("/listaFacturas")
-    public String listarFacturas(Model model) {
-
-        List<Factura> facturas = facturaService.facturasNoEliminadas();
-
-        model.addAttribute("facturas", facturas);
-
-        return "facturas/listaFacturas";
-    }*/
+    /*****************Historia de Usuario 4.4: VER FACTURAS*****************/   
     
     @GetMapping("/listaFacturas")
     public String listarFacturas(

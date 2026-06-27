@@ -12,6 +12,7 @@ import com.desi.jeques.repository.ContratoRepository;
 import com.desi.jeques.repository.HistorialEstadoContratoRepository;
 import com.desi.jeques.service.ContratoService;
 import com.desi.jeques.service.PropiedadService;
+import com.desi.jeques.utilidades.EstadoContrato;
 
 @Service
 public class ContratoServiceImpl implements ContratoService {
@@ -31,6 +32,13 @@ public class ContratoServiceImpl implements ContratoService {
     @Override
     public List<Contrato> listarContratosActivos() {
         return contratoRepository.findByEliminadoFalse();
+    }
+    
+    
+    //Busqueda para colox
+    @Override
+    public List<Contrato> obtenerActivos() {
+        return contratoRepository.findByEstadoAndEliminadoFalse("Activo");
     }
 
     @Override

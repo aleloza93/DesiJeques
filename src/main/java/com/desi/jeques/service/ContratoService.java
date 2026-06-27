@@ -15,6 +15,7 @@ public interface ContratoService {
     Contrato guardar(Contrato contrato);
 
     void eliminarLogico(Long id);
-
+    
+    List<Contrato> obtenerActivos();
     
 }

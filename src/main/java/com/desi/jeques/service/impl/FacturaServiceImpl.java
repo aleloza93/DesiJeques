@@ -46,33 +46,31 @@ public class FacturaServiceImpl implements FacturaService {
             LocalDate fechaPago,
             MedioPago medioPago,
             BigDecimal importePagado,
-            BigDecimal interesPagado) {
+            BigDecimal interesPagado) throws FacturaExcepcion{
     	
-    	//Verifica fecha de vencimiento sobre la fecha de emision si es valido
-        if (fechaVencimiento.isBefore(fechaEmision)) {
-            throw new IllegalArgumentException(
-                "La fecha de vencimiento debe ser igual o posterior a la de emisión");
-        }
-        
-        //Verifica que el importe no sea >=0
-        if (importe.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El importe debe ser positivo");
-        }
-        
-        if (importePagado != null && importePagado.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("El importe pagado no puede ser negativo");
-        }
-        
-        if (interesPagado != null && interesPagado.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("El interés pagado no puede ser negativo");
-        }
-        
-        Contrato contrato = contratoService.buscarPorId(contratoId); 
+    	if (fechaVencimiento.isBefore(fechaEmision)) {
+    	    throw new FacturaExcepcion("fechaVencimiento",
+    	        "La fecha de vencimiento debe ser igual o posterior a la de emisión");
+    	}
 
-        if (!contratoService.puedeFacturarse(contrato)) {
-            throw new IllegalStateException(
-                "No se puede crear una factura para este contrato en su estado actual");
-        }
+    	if (importe.compareTo(BigDecimal.ZERO) <= 0) {
+    	    throw new FacturaExcepcion("importe", "El importe debe ser positivo");
+    	}
+
+    	if (importePagado != null && importePagado.compareTo(BigDecimal.ZERO) < 0) {
+    	    throw new FacturaExcepcion("importePagado", "El importe pagado no puede ser negativo");
+    	}
+
+    	if (interesPagado != null && interesPagado.compareTo(BigDecimal.ZERO) < 0) {
+    	    throw new FacturaExcepcion("interes", "El interés pagado no puede ser negativo");
+    	}    	
+    	
+    	Contrato contrato = contratoService.buscarPorId(contratoId);
+
+    	if (!contratoService.puedeFacturarse(contrato)) {
+    	    throw new FacturaExcepcion(
+    	        "No se puede crear una factura para este contrato en su estado actual");
+    	}
 
         Factura factura = new Factura();
         factura.setContrato(contrato);
@@ -217,21 +215,19 @@ public class FacturaServiceImpl implements FacturaService {
     
     @Override
     @Transactional
-    public boolean eliminarFactura(Long id) {
-    	Factura factura = obtenerPorId(id);    	
+    public void eliminarFactura(Long id) throws FacturaExcepcion {
+        Factura factura = obtenerPorId(id);
 
-        if (factura.isEliminada()) return false;
-    	
-    	if(factura.getEstado() == EstadoFactura.PAGADA) {
-    		System.out.print("Esta queriendo eliminar una factura PAGADA, no deberia hacer eso"); // ver error aca
-    		return false;
-    	}
-    	
-    	factura.setEliminada(true);
-    	
-    	facturaRepository.save(factura);
-    	
-    	return true;
+        if (factura.isEliminada()) {
+            throw new FacturaExcepcion("Esta factura ya fue eliminada");
+        }
+
+        if (factura.getEstado() == EstadoFactura.PAGADA) {
+            throw new FacturaExcepcion("No se puede eliminar una factura pagada");
+        }
+
+        factura.setEliminada(true);
+        facturaRepository.save(factura);
     }
     
     /***************VER FACTURA***************/

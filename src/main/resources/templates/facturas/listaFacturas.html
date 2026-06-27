@@ -31,6 +31,14 @@
                     <p>Búsqueda, filtrado avanzado y gestión directa de comprobantes emitidos.</p>
                 </div>
             </header>
+			
+			<div th:if="${mensaje}" class="mensaje-exito">
+			    <span th:text="${mensaje}"></span>
+			</div>
+
+			<div th:if="${errorGlobal}" class="mensaje-error">
+			    <span th:text="${errorGlobal}"></span>
+			</div>
 
 			<div class="form-container" style="max-width: 100%; margin: 0 0 24px 0; padding: 20px;">
 			    <form th:action="@{/facturas/listaFacturas}" method="get" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
