@@ -9,36 +9,48 @@
 
     <div class="form-container">
         <h1>Editar Factura #<span th:text="${factura.id}"></span></h1>
+
+        <!-- Error global -->
+        <div th:if="${errorGlobal}" class="error-global">
+            <p th:text="${errorGlobal}"></p>
+        </div>
         
         <form th:action="@{/facturas/modificarFactura/{id}(id=${factura.id})}" method="post">
-            
+
             <div class="form-section">
                 <h3>Datos Generales</h3>
                 
                 <div class="form-group">
-                    <label th:for="estado">Estado de la Factura:</label>
+                    <label for="estado">Estado de la Factura:</label>
                     <select id="estado" name="estado" onchange="toggleSeccionPago()" required>
                         <option th:each="est : ${estados}" 
                                 th:value="${est}" 
                                 th:text="${est}"
                                 th:selected="${est == factura.estado}"></option>
                     </select>
+                    <span th:if="${error_estado}" th:text="${error_estado}" class="error-campo"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="conceptoFacturado">Concepto facturado:</label>
-                    <input type="text" id="conceptoFacturado" name="conceptoFacturado" th:value="${factura.conceptoFacturado}" required />
+                    <input type="text" id="conceptoFacturado" name="conceptoFacturado" 
+                           th:value="${factura.conceptoFacturado}" required />
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="fechaEmision">Fecha de emisión:</label>
-                        <input type="date" id="fechaEmision" name="fechaEmision" th:value="${factura.fechaEmision}" required />
+                        <input type="date" id="fechaEmision" name="fechaEmision" 
+                               th:value="${factura.fechaEmision}" required />
                     </div>
 
                     <div class="form-group">
                         <label for="fechaVencimiento">Fecha de vencimiento:</label>
-                        <input type="date" id="fechaVencimiento" name="fechaVencimiento" th:value="${factura.fechaVencimiento}" required />
+                        <input type="date" id="fechaVencimiento" name="fechaVencimiento" 
+                               th:value="${factura.fechaVencimiento}" required />
+                        <span th:if="${error_fechaVencimiento}" 
+                              th:text="${error_fechaVencimiento}" 
+                              class="error-campo"></span>
                     </div>
                 </div>
 
@@ -46,7 +58,8 @@
                     <label for="importe">Importe Base:</label>
                     <div class="input-with-prefix">
                         <span>$</span>
-                        <input type="number" step="0.01" id="importe" name="importe" th:value="${factura.importe}" required />
+                        <input type="number" step="0.01" id="importe" name="importe" 
+                               th:value="${factura.importe}" required />
                     </div>
                 </div>
             </div>
@@ -57,7 +70,11 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="fechaPago">Fecha de pago:</label>
-                        <input type="date" id="fechaPago" name="fechaPago" th:value="${factura.fechaPago}" />
+                        <input type="date" id="fechaPago" name="fechaPago" 
+                               th:value="${factura.fechaPago}" />
+                        <span th:if="${error_fechaPago}" 
+                              th:text="${error_fechaPago}" 
+                              class="error-campo"></span>
                     </div>
 
                     <div class="form-group">
@@ -69,6 +86,9 @@
                                     th:text="${m}"
                                     th:selected="${m == factura.medio}"></option>
                         </select>
+                        <span th:if="${error_medio}" 
+                              th:text="${error_medio}" 
+                              class="error-campo"></span>
                     </div>
                 </div>
 
@@ -77,15 +97,21 @@
                         <label for="importePagado">Importe pagado:</label>
                         <div class="input-with-prefix">
                             <span>$</span>
-                            <input type="number" step="0.01" id="importePagado" name="importePagado" th:value="${factura.importePagado}" placeholder="0.00" />
+                            <input type="number" step="0.01" id="importePagado" 
+                                   name="importePagado" th:value="${factura.importePagado}" 
+                                   placeholder="0.00" />
                         </div>
+                        <span th:if="${error_importePagado}" 
+                              th:text="${error_importePagado}" 
+                              class="error-campo"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="interes">Interés pagado:</label>
                         <div class="input-with-prefix">
                             <span>$</span>
-                            <input type="number" step="0.01" id="interes" name="interes" th:value="${factura.interes}" placeholder="0.00" />
+                            <input type="number" step="0.01" id="interes" name="interes" 
+                                   th:value="${factura.interes}" placeholder="0.00" />
                         </div>
                     </div>
                 </div>
@@ -98,47 +124,40 @@
         </form>
     </div>
 
-	<script>
-	        function toggleSeccionPago() {
-	            const estadoSelect = document.getElementById('estado');
-	            const seccionPago = document.getElementById('seccion-pago');
-	            const inputsPago = seccionPago.querySelectorAll('input, select');
-	            
-	            // Campos de importe para controlar el bloqueo por VENCIDA
-	            const inputImporte = document.getElementById('importe');
+    <script>
+        function toggleSeccionPago() {
+            const estadoSelect = document.getElementById('estado');
+            const seccionPago = document.getElementById('seccion-pago');
+            const inputsPago = seccionPago.querySelectorAll('input, select');
+            const inputImporte = document.getElementById('importe');
 
-	            // 1. Control de la sección de Pagos
-	            if (estadoSelect.value === 'PAGADA') {
-	                seccionPago.style.display = 'block';
-	                document.getElementById('fechaPago').required = true;
-	                document.getElementById('medio').required = true;
-	                document.getElementById('importePagado').required = true;
-	            } else {
-	                seccionPago.style.display = 'none';
-	                inputsPago.forEach(input => {
-	                    input.required = false;
-	                    input.value = ""; 
-	                });
-	            }
+            if (estadoSelect.value === 'PAGADA') {
+                seccionPago.style.display = 'block';
+                document.getElementById('fechaPago').required = true;
+                document.getElementById('medio').required = true;
+                document.getElementById('importePagado').required = true;
+            } else {
+                seccionPago.style.display = 'none';
+                inputsPago.forEach(input => {
+                    input.required = false;
+                    input.value = "";
+                });
+            }
 
-	            // 2. Control del bloqueo del Importe si está VENCIDA
-	            if (estadoSelect.value === 'VENCIDA') {
-	                inputImporte.readOnly = true;
-	                // Le aplicamos una clase o estilo directo para que se vea gris oscuro como "bloqueado"
-	                inputImporte.style.backgroundColor = '#f1f5f9';
-	                inputImporte.style.color = '#64748b';
-	                inputImporte.style.cursor = 'not-allowed';
-	            } else {
-	                // Si vuelve a PENDIENTE o PAGADA, se puede editar normalmente
-	                inputImporte.readOnly = false;
-	                inputImporte.style.backgroundColor = '#fff';
-	                inputImporte.style.color = '#333';
-	                inputImporte.style.cursor = 'text';
-	            }
-	        }
+            if (estadoSelect.value === 'VENCIDA') {
+                inputImporte.readOnly = true;
+                inputImporte.style.backgroundColor = '#f1f5f9';
+                inputImporte.style.color = '#64748b';
+                inputImporte.style.cursor = 'not-allowed';
+            } else {
+                inputImporte.readOnly = false;
+                inputImporte.style.backgroundColor = '#fff';
+                inputImporte.style.color = '#333';
+                inputImporte.style.cursor = 'text';
+            }
+        }
 
-	        // Ejecutar al cargar la página por el estado inicial de la factura
-	        window.onload = toggleSeccionPago;
-	    </script>
+        window.onload = toggleSeccionPago;
+    </script>
 </body>
 </html>

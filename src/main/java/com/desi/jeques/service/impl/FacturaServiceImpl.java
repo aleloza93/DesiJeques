@@ -16,6 +16,7 @@ import com.desi.jeques.repository.HistorialEstadoFacturaRepository;
 import com.desi.jeques.service.ContratoService;
 import com.desi.jeques.service.FacturaService;
 import com.desi.jeques.utilidades.EstadoFactura;
+import com.desi.jeques.utilidades.FacturaExcepcion;
 import com.desi.jeques.utilidades.MedioPago;
 
 import jakarta.transaction.Transactional;
@@ -126,42 +127,42 @@ public class FacturaServiceImpl implements FacturaService {
                                      LocalDate fechaPago,
                                      MedioPago medioPago,
                                      BigDecimal importePagado,
-                                     BigDecimal interes) {
+                                     BigDecimal interes) throws FacturaExcepcion {
 
         
         Factura factura = obtenerPorId(id);
 
         //Verifico si le quieren cambiar el estado anulada o pagada
         if (factura.getEstado() == EstadoFactura.ANULADA) {
-            throw new IllegalStateException("No se puede modificar una factura anulada");
+            throw new FacturaExcepcion("No se puede modificar una factura anulada");
         }
         if (factura.getEstado() == EstadoFactura.PAGADA) {
-            throw new IllegalStateException("No se puede modificar una factura pagada");
+            throw new FacturaExcepcion("No se puede modificar una factura pagada");
         }
         
         //Verificacion de fecha 
         if (fechaVencimiento.isBefore(fechaEmision)) {
-            throw new IllegalArgumentException(
+            throw new FacturaExcepcion("fechaVencimiento",
                 "La fecha de vencimiento debe ser igual o posterior a la de emisión");
         }
 
         //Verifico que sea valido el cambio de estado
         if (!validarCambioEstado(factura.getEstado(), nuevoEstado)) {
-            throw new IllegalStateException(
-                "No se puede realizar ese cambio de estado de factura");
-
+        	throw new FacturaExcepcion("estado",
+        	        "Cambio de estado inválido: no se puede pasar de " 
+        	        + factura.getEstado() + " a " + nuevoEstado);
         }
 
         // Verifico que si cambia a PAGADA se ingresen los datos de pago
         if (nuevoEstado == EstadoFactura.PAGADA) {            
             if (fechaPago == null) {
-                throw new IllegalArgumentException("La fecha de pago es obligatoria");
+                throw new FacturaExcepcion("La fecha de pago es obligatoria");
             }
             if (medioPago == null) {
-                throw new IllegalArgumentException("El medio de pago es obligatorio");
+                throw new FacturaExcepcion("El medio de pago es obligatorio");
             }
             if (importePagado == null || importePagado.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("El importe pagado debe ser positivo");
+                throw new FacturaExcepcion("El importe pagado debe ser positivo");
             }
             factura.setFechaPago(fechaPago);
             factura.setMedio(medioPago);
@@ -203,7 +204,8 @@ public class FacturaServiceImpl implements FacturaService {
     //Se chequea el estado de ambas facturas
     public boolean validarCambioEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado) {
         if (estadoActual == nuevoEstado) return true;
-        if (estadoActual == EstadoFactura.VENCIDA && nuevoEstado == EstadoFactura.PAGADA) return true;
+        if (estadoActual == EstadoFactura.PENDIENTE && nuevoEstado != EstadoFactura.PENDIENTE ) return true;
+        if (estadoActual == EstadoFactura.VENCIDA && (nuevoEstado == EstadoFactura.PAGADA  || nuevoEstado == EstadoFactura.ANULADA)) return true;
         return false;
     }
     
@@ -238,7 +240,7 @@ public class FacturaServiceImpl implements FacturaService {
     	return facturaRepository.findByEliminadaFalse();
     }
     
-    public List<Factura> filtrar(
+    public List<Factura> filtroFactura(
             Long contratoId,
             Long propiedadId,
             Long inquilinoId,

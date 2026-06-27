@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import com.desi.jeques.service.ContratoService;
 //import com.desi.jeques.entity.Factura;
 import com.desi.jeques.service.FacturaService;
 import com.desi.jeques.utilidades.EstadoFactura;
+import com.desi.jeques.utilidades.FacturaExcepcion;
 import com.desi.jeques.utilidades.MedioPago;
 
 @Controller
@@ -93,8 +95,8 @@ public class FacturaController {
 
     // Procesa el formulario de edición
     @PostMapping("/modificarFactura/{id}")
-    public String procesarModificacion(@PathVariable Long id, @ModelAttribute Factura form, Model model) {
-        facturaService.modificarFactura(
+    public String procesarModificacion(@PathVariable Long id, @ModelAttribute Factura form, BindingResult result, Model model) {
+        /*facturaService.modificarFactura(
             id,
             form.getEstado(),
             form.getConceptoFacturado(),
@@ -105,9 +107,47 @@ public class FacturaController {
             form.getMedio(),
             form.getImportePagado(),
             form.getInteres()
-        );
-        return "redirect:/facturas";
+        ) ;
+        return "redirect:/facturas";*/
+    	
+    	
+    	if (result.hasErrors()) {
+            // errores de @Valid (si los agregás después)
+            model.addAttribute("estados", EstadoFactura.values());
+            model.addAttribute("mediosPago", MedioPago.values());
+            return "facturas/modificarFactura";
+        }
+
+        try {
+            facturaService.modificarFactura(
+                id,
+                form.getEstado(),
+                form.getConceptoFacturado(),
+                form.getFechaEmision(),
+                form.getFechaVencimiento(),
+                form.getImporte(),
+                form.getFechaPago(),
+                form.getMedio(),
+                form.getImportePagado(),
+                form.getInteres()
+            );
+            return "redirect:/facturas/listaFacturas";
+
+        } catch (FacturaExcepcion e) {
+            if (e.getAtributo() == null) {
+                model.addAttribute("errorGlobal", e.getMessage());
+            } else {
+                model.addAttribute("error_" + e.getAtributo(), e.getMessage());
+            }
+            model.addAttribute("factura", facturaService.obtenerPorId(id));
+            model.addAttribute("estados", EstadoFactura.values());
+            model.addAttribute("mediosPago", MedioPago.values());
+            return "facturas/modificarFactura";
+        }
     }
+    	
+    	
+    
     /*****************Historia de Usuario 4.3: ELIMINAR FACTURA*****************/
     
     @GetMapping("/eliminarFactura")
@@ -164,7 +204,7 @@ public class FacturaController {
             @RequestParam(required = false) LocalDate fechaHasta,
             Model model) {
 
-        List<Factura> facturas = facturaService.filtrar(
+        List<Factura> facturas = facturaService.filtroFactura(
                 contratoId,
                 propiedadId,
                 inquilinoId,

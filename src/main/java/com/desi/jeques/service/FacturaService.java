@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.desi.jeques.entity.Factura;
 import com.desi.jeques.utilidades.EstadoFactura;
+import com.desi.jeques.utilidades.FacturaExcepcion;
 import com.desi.jeques.utilidades.MedioPago;
 
 
@@ -34,7 +35,7 @@ public interface FacturaService {
             LocalDate fechaPago,
             MedioPago medioPago,
             BigDecimal importePagado,
-            BigDecimal interes);
+            BigDecimal interes) throws FacturaExcepcion;
     
     boolean validarCambioEstado(EstadoFactura estadoActual, EstadoFactura nuevoEstado);
     
@@ -45,7 +46,7 @@ public interface FacturaService {
     
     List<Factura> facturasNoEliminadas();
     
-    List<Factura> filtrar(Long contratoId,
+    List<Factura> filtroFactura(Long contratoId,
     		Long propiedadId,
             Long inquilinoId,
             EstadoFactura estado,
