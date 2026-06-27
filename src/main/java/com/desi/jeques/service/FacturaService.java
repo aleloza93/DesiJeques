@@ -16,7 +16,6 @@ public interface FacturaService {
 			String conceptoFacturado,
             LocalDate fechaEmision,
             LocalDate fechaVencimiento,
-            BigDecimal importe,
             LocalDate fechaPago,
             MedioPago medioPago,
             BigDecimal importePagado,

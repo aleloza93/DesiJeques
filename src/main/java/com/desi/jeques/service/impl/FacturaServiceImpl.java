@@ -42,7 +42,6 @@ public class FacturaServiceImpl implements FacturaService {
     		String conceptoFacturado,
             LocalDate fechaEmision,
             LocalDate fechaVencimiento,
-            BigDecimal importe,
             LocalDate fechaPago,
             MedioPago medioPago,
             BigDecimal importePagado,
@@ -51,12 +50,8 @@ public class FacturaServiceImpl implements FacturaService {
     	if (fechaVencimiento.isBefore(fechaEmision)) {
     	    throw new FacturaExcepcion("fechaVencimiento",
     	        "La fecha de vencimiento debe ser igual o posterior a la de emisión");
-    	}
-
-    	if (importe.compareTo(BigDecimal.ZERO) <= 0) {
-    	    throw new FacturaExcepcion("importe", "El importe debe ser positivo");
-    	}
-
+    	}    	
+    	
     	if (importePagado != null && importePagado.compareTo(BigDecimal.ZERO) < 0) {
     	    throw new FacturaExcepcion("importePagado", "El importe pagado no puede ser negativo");
     	}
@@ -71,12 +66,18 @@ public class FacturaServiceImpl implements FacturaService {
     	    throw new FacturaExcepcion(
     	        "No se puede crear una factura para este contrato en su estado actual");
     	}
+    	
+    	BigDecimal importe = contrato.getImporteMensual();
+    	
+    	if (importe == null || importe.compareTo(BigDecimal.ZERO) <= 0) {
+    	    throw new FacturaExcepcion("importe", "El importe del contrato debe ser positivo");
+    	}
 
         Factura factura = new Factura();
         factura.setContrato(contrato);
         factura.setFechaEmision(fechaEmision);
         factura.setFechaVencimiento(fechaVencimiento);
-        factura.setImporte(contrato.getImporteMensual());
+        factura.setImporte(importe);
         factura.setEstado(EstadoFactura.PENDIENTE);
         factura.setEliminada(false);
         factura.setConceptoFacturado(conceptoFacturado);

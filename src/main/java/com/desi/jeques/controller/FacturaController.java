@@ -57,7 +57,6 @@ public class FacturaController {
                 form.getConceptoFacturado(),
                 form.getFechaEmision(),
                 form.getFechaVencimiento(),
-                form.getImporte(),
                 form.getFechaPago(),
                 form.getMedio(),
                 form.getImportePagado(),

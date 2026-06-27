@@ -24,10 +24,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="importe">Importe Base Mensual:</label>
+                    <label for="importe">Importe Mensual:</label>
                     <div class="input-with-prefix">
                         <span>$</span>
-                        <input type="number" step="0.01" id="importe" th:value="${contrato.importeMensual}" readonly />						
+                        <input type="text" step="0.01" id="importe" th:value="${contrato.importeMensual}" readonly />						
 						<span th:if="${error_importe}" 
 						      th:text="${error_importe}" 
 						      class="error-campo"></span>
