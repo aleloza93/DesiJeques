@@ -2,97 +2,112 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Listado de Propiedades</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 30px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        table, th, td { border: 1px solid #ccc; }
-        th, td { padding: 10px; text-align: left; }
-        .btn { padding: 8px 12px; text-decoration: none; border: 1px solid #333; margin-right: 5px; display: inline-block; }
-        .ok { color: green; }
-        .error { color: red; }
-        .filtros { margin-top: 20px; margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; }
-        .filtros label { display: block; margin-top: 10px; }
-        .filtros input, .filtros select { width: 300px; padding: 6px; margin-top: 4px; }
-        .acciones-filtro { margin-top: 15px; }
-    </style>
+    <title>Propiedades</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-	
 
-<h1>Propiedades</h1>
-<a th:href="@{/}" class="btn">Inicio</a>
-<p class="ok" th:if="${ok}" th:text="${ok}"></p>
-<p class="error" th:if="${error}" th:text="${error}"></p>
-
-<a th:href="@{/propiedades/nueva}" class="btn">Nueva Propiedad</a>
-
-<div class="filtros">
-    <form th:action="@{/propiedades}" method="get">
-        <label>Dirección</label>
-        <input type="text" name="direccion" th:value="${direccion}">
-
-        <label>Ciudad</label>
-        <input type="text" name="ciudad" th:value="${ciudad}">
-
-        <label>Tipo de propiedad</label>
-        <select name="tipoPropiedad">
-            <option value="">Todos</option>
-            <option value="casa" th:selected="${tipoPropiedad == 'casa'}">Casa</option>
-            <option value="departamento" th:selected="${tipoPropiedad == 'departamento'}">Departamento</option>
-            <option value="local" th:selected="${tipoPropiedad == 'local'}">Local</option>
-            <option value="otro" th:selected="${tipoPropiedad == 'otro'}">Otro</option>
-        </select>
-
-        <label>Estado de disponibilidad</label>
-        <select name="estadoDisponibilidad">
-            <option value="">Todos</option>
-            <option value="disponible" th:selected="${estadoDisponibilidad == 'disponible'}">Disponible</option>
-            <option value="reservada" th:selected="${estadoDisponibilidad == 'reservada'}">Reservada</option>
-            <option value="alquilada" th:selected="${estadoDisponibilidad == 'alquilada'}">Alquilada</option>
-            <option value="inactiva" th:selected="${estadoDisponibilidad == 'inactiva'}">Inactiva</option>
-        </select>
-
-        <div class="acciones-filtro">
-            <button type="submit" class="btn">Buscar</button>
-            <a th:href="@{/propiedades}" class="btn">Limpiar</a>
+<div class="page-shell">
+    <div class="module-header">
+        <div class="module-title">
+            <h1>Propiedades</h1>
+            <p>Administración de inmuebles registrados en el sistema.</p>
         </div>
-    </form>
+        <div class="toolbar">
+            <a th:href="@{/}" class="btn btn-secondary">Inicio</a>
+            <a th:href="@{/propiedades/nueva}" class="btn btn-primary">Nueva Propiedad</a>
+        </div>
+    </div>
+
+    <p class="ok" th:if="${ok}" th:text="${ok}"></p>
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+
+    <div class="card">
+        <form th:action="@{/propiedades}" method="get">
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" name="direccion" th:value="${direccion}">
+                </div>
+
+                <div class="form-group">
+                    <label>Ciudad</label>
+                    <input type="text" name="ciudad" th:value="${ciudad}">
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de propiedad</label>
+                    <select name="tipoPropiedad">
+                        <option value="">Todos</option>
+                        <option value="casa" th:selected="${tipoPropiedad == 'casa'}">Casa</option>
+                        <option value="departamento" th:selected="${tipoPropiedad == 'departamento'}">Departamento</option>
+                        <option value="local" th:selected="${tipoPropiedad == 'local'}">Local</option>
+                        <option value="otro" th:selected="${tipoPropiedad == 'otro'}">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Estado de disponibilidad</label>
+                    <select name="estadoDisponibilidad">
+                        <option value="">Todos</option>
+                        <option value="disponible" th:selected="${estadoDisponibilidad == 'disponible'}">Disponible</option>
+                        <option value="reservada" th:selected="${estadoDisponibilidad == 'reservada'}">Reservada</option>
+                        <option value="alquilada" th:selected="${estadoDisponibilidad == 'alquilada'}">Alquilada</option>
+                        <option value="inactiva" th:selected="${estadoDisponibilidad == 'inactiva'}">Inactiva</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="actions-row">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+                <a th:href="@{/propiedades}" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="card table-wrapper">
+        <table class="tabla-listado">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Tipo</th>
+                <th>Ambientes</th>
+                <th>m²</th>
+                <th>Estado</th>
+                <th>Propietario</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="propiedad : ${propiedades}">
+                <td th:text="${propiedad.id}"></td>
+                <td th:text="${propiedad.direccion}"></td>
+                <td th:text="${propiedad.ciudad}"></td>
+                <td th:text="${propiedad.tipoPropiedad}"></td>
+                <td th:text="${propiedad.cantidadAmbientes}"></td>
+                <td th:text="${propiedad.metrosCuadrados}"></td>
+                <td>
+                    <span class="badge"
+                          th:text="${propiedad.estadoDisponibilidad}"
+                          th:classappend="${' badge-' + propiedad.estadoDisponibilidad}">
+                    </span>
+                </td>
+                <td th:text="${propiedad.propietario.nombreCompleto}"></td>
+                <td>
+                    <div class="table-actions">
+                        <a th:href="@{/propiedades/editar/{id}(id=${propiedad.id})}" class="btn btn-warning btn-sm">Editar</a>
+                        <a th:href="@{/propiedades/eliminar/{id}(id=${propiedad.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('¿Seguro que desea eliminar la propiedad?')">Eliminar</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Dirección</th>
-        <th>Ciudad</th>
-        <th>Tipo</th>
-        <th>Ambientes</th>
-        <th>m²</th>
-        <th>Estado</th>
-        <th>Propietario</th>
-        <th>Acciones</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="propiedad : ${propiedades}">
-        <td th:text="${propiedad.id}"></td>
-        <td th:text="${propiedad.direccion}"></td>
-        <td th:text="${propiedad.ciudad}"></td>
-        <td th:text="${propiedad.tipoPropiedad}"></td>
-        <td th:text="${propiedad.cantidadAmbientes}"></td>
-        <td th:text="${propiedad.metrosCuadrados}"></td>
-        <td th:text="${propiedad.estadoDisponibilidad}"></td>
-        <td th:text="${propiedad.propietario.nombreCompleto}"></td>
-        <td>
-            <a th:href="@{/propiedades/editar/{id}(id=${propiedad.id})}" class="btn">Editar</a>
-            <a th:href="@{/propiedades/eliminar/{id}(id=${propiedad.id})}" class="btn"
-               onclick="return confirm('¿Seguro que desea eliminar la propiedad?')">Eliminar</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
 </body>
-
 </html>

@@ -69,20 +69,20 @@ public class PropiedadController {
                           Model model,
                           RedirectAttributes redirectAttributes) {
 
-    	if (propiedad.getDireccion() == null || propiedad.getDireccion().isBlank()
-    	        || propiedad.getCiudad() == null || propiedad.getCiudad().isBlank()
-    	        || propiedad.getTipoPropiedad() == null || propiedad.getTipoPropiedad().isBlank()
-    	        || propiedad.getCantidadAmbientes() == null || propiedad.getCantidadAmbientes() <= 0
-    	        || propiedad.getMetrosCuadrados() == null || propiedad.getMetrosCuadrados() <= 0
-    	        || propiedad.getDescripcion() == null || propiedad.getDescripcion().isBlank()
-    	        || propiedad.getEstadoDisponibilidad() == null || propiedad.getEstadoDisponibilidad().isBlank()
-    	        || propiedad.getPropietario() == null || propiedad.getPropietario().getId() == null) {
+        if (propiedad.getDireccion() == null || propiedad.getDireccion().isBlank()
+                || propiedad.getCiudad() == null || propiedad.getCiudad().isBlank()
+                || propiedad.getTipoPropiedad() == null || propiedad.getTipoPropiedad().isBlank()
+                || propiedad.getCantidadAmbientes() == null || propiedad.getCantidadAmbientes() <= 0
+                || propiedad.getMetrosCuadrados() == null || propiedad.getMetrosCuadrados() <= 0
+                || propiedad.getDescripcion() == null || propiedad.getDescripcion().isBlank()
+                || propiedad.getEstadoDisponibilidad() == null || propiedad.getEstadoDisponibilidad().isBlank()
+                || propiedad.getPropietario() == null || propiedad.getPropietario().getId() == null) {
 
-    	    model.addAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
-    	    model.addAttribute("personas", personaService.listarActivas());
-    	    model.addAttribute("modoEdicion", propiedad.getId() != null);
-    	    return "propiedades/formulario";
-    	}
+            model.addAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
+            model.addAttribute("personas", personaService.listarActivas());
+            model.addAttribute("modoEdicion", propiedad.getId() != null);
+            return "propiedades/formulario";
+        }
 
         if (propiedadService.existeDuplicada(propiedad.getDireccion(), propiedad.getCiudad(), propiedad.getId())) {
             model.addAttribute("error", "Ya existe una propiedad activa con la misma dirección y ciudad.");
@@ -91,15 +91,27 @@ public class PropiedadController {
             return "propiedades/formulario";
         }
 
-        propiedadService.guardar(propiedad);
-        redirectAttributes.addFlashAttribute("ok", "Propiedad guardada correctamente.");
-        return "redirect:/propiedades";
+        try {
+            propiedadService.guardar(propiedad);
+            redirectAttributes.addFlashAttribute("ok", "Propiedad guardada correctamente.");
+            return "redirect:/propiedades";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("personas", personaService.listarActivas());
+            model.addAttribute("modoEdicion", propiedad.getId() != null);
+            return "propiedades/formulario";
+        }
     }
 
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        propiedadService.eliminarLogico(id);
-        redirectAttributes.addFlashAttribute("ok", "Propiedad eliminada correctamente.");
+        try {
+            propiedadService.eliminarLogico(id);
+            redirectAttributes.addFlashAttribute("ok", "Propiedad eliminada correctamente.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
         return "redirect:/propiedades";
     }
 }

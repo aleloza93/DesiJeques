@@ -14,15 +14,18 @@ h1, h2, h3 {
     margin-top: 0;
 }
 
+a {
+    color: inherit;
+}
+
 /* ==========================================================================
-   2. ESTRUCTURA DASHBOARD (Index principal)
+   2. ESTRUCTURA DASHBOARD / HOME
    ========================================================================== */
 .dashboard-layout {
     display: flex;
     min-height: 100vh;
 }
 
-/* Barra Lateral */
 .sidebar {
     width: 260px;
     background-color: #1e293b;
@@ -79,7 +82,6 @@ h1, h2, h3 {
     padding-top: 15px;
 }
 
-/* Contenido Principal */
 .main-content {
     flex-grow: 1;
     padding: 40px;
@@ -95,7 +97,6 @@ h1, h2, h3 {
     margin: 4px 0 0 0;
 }
 
-/* Grilla de Tarjetas */
 .contenedor {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -136,7 +137,6 @@ h1, h2, h3 {
     flex-grow: 1;
 }
 
-/* Botones del Dashboard */
 .btn-dashboard {
     display: block;
     text-align: center;
@@ -154,7 +154,6 @@ h1, h2, h3 {
     background-color: #1d4ed8;
 }
 
-/* Estados Pendientes 
 .tarjeta-pendiente {
     background-color: #f8fafc;
     border-style: dashed;
@@ -170,286 +169,250 @@ h1, h2, h3 {
     color: #64748b;
     cursor: not-allowed;
     pointer-events: none;
-}*/
+}
 
 /* ==========================================================================
-   3. ESTILOS DEL FORMULARIO DE NUEVA FACTURA
+   3. LAYOUT GENERAL DE MÓDULOS
    ========================================================================== */
-.form-container {
-    max-width: 650px;
+.page-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px;
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.module-title h1 {
+    margin-bottom: 4px;
+}
+
+.module-title p {
+    margin: 0;
+    color: #64748b;
+}
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.card {
     background: #ffffff;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
 }
 
-.form-section {
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #f1f2f6;
+.ok {
+    color: #15803d;
+    font-weight: 600;
+    margin-bottom: 16px;
 }
 
-.form-section h3 {
-    margin-top: 0;
-    color: #34495e;
-    font-size: 1.1em;
-    margin-bottom: 15px;
+.error {
+    color: #b91c1c;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* ==========================================================================
+   4. BOTONES
+   ========================================================================== */
+.btn {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #334155;
+    border-color: #cbd5e1;
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e1;
+}
+
+.btn-danger {
+    background-color: #dc2626;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
+.btn-warning {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.btn-warning:hover {
+    background-color: #d97706;
+}
+
+.btn-sm {
+    padding: 8px 10px;
+    font-size: 0.82rem;
+}
+
+/* ==========================================================================
+   5. FILTROS Y FORMULARIOS
+   ========================================================================== */
+.filter-grid,
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
 }
 
 .form-group {
-    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
 }
 
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+.form-group-full {
+    grid-column: 1 / -1;
 }
 
-.form-container label {
+label {
     font-weight: 600;
     margin-bottom: 6px;
-    color: #4b5563;
-    font-size: 0.9em;
+    color: #475569;
 }
 
-.form-container input[type="text"],
-.form-container input[type="number"],
-.form-container input[type="date"],
-.form-container select {
-    padding: 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 5px;
-    font-size: 1em;
-    background-color: #fff;
-    color: #333;
-    box-sizing: border-box;
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
     width: 100%;
-}
-
-.form-container input[readonly] {
-    background-color: #f1f5f9;
-    color: #64748b;
-    cursor: not-allowed;
-    border-color: #e2e8f0;
-}
-
-.form-container input:focus, 
-.form-container select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
-
-.input-with-prefix {
-    display: flex;
-    align-items: center;
-    position: relative;
-	width: 100%;
-}
-
-.input-with-prefix span {
-    position: absolute;
-    left: 12px;
-    color: #94a3b8;
-    font-weight: bold;
-	z-index: 2;
-	pointer-events: none;
-}
-
-.input-with-prefix input {
-    padding-left: 28px;
-}
-
-.input-with-prefix input[type="number"] {
-    padding-left: 30px !important;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: #fff;
     box-sizing: border-box;
 }
 
-.form-actions {
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.actions-row {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
-    margin-top: 20px;
-}
-
-.btn-submit {
-    background-color: #2563eb;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 1em;
-    flex: 2;
-    transition: background-color 0.2s;
-}
-
-.btn-submit:hover {
-    background-color: #1d4ed8;
-}
-
-.btn-cancel {
-    background-color: #e2e8f0;
-    color: #475569;
-    padding: 12px 24px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    text-align: center;
-    font-size: 0.95em;
-    flex: 1;
-    transition: background-color 0.2s;
-}
-
-.btn-cancel:hover {
-    background-color: #cbd5e1;
+    flex-wrap: wrap;
 }
 
 /* ==========================================================================
-   4. ESTILOS DE TABLAS Y LISTADOS
+   6. TABLAS
    ========================================================================== */
-.table-container {
-    max-width: 900px;
-    margin: 40px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    border: 1px solid #ccc;
+.table-wrapper {
+    overflow-x: auto;
 }
 
 .tabla-listado {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    font-size: 0.95em;
+    font-size: 0.95rem;
+    background: #fff;
 }
 
 .tabla-listado th {
     background-color: #1e293b;
-    color: white;
+    color: #fff;
     text-align: left;
     padding: 12px;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .tabla-listado td {
     padding: 12px;
-    border-bottom: 1px solid #eee;
-    color: #333;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
 }
 
 .tabla-listado tbody tr:hover {
-    background-color: #fcfcfc;
+    background-color: #f8fafc;
 }
 
-.text-center { text-align: center !important; }
-.fw-bold { font-weight: bold; }
-.sin-datos { color: #888; font-style: italic; padding: 25px !important; }
-
-.btn-action {
-    display: inline-block;
-    padding: 6px 14px;
-    background-color: #2563eb;
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 0.85em;
-    border-radius: 4px;
-    transition: background-color 0.15s;
+.table-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-.btn-action:hover {
-    background-color: #1d4ed8;
-}
-
+/* ==========================================================================
+   7. BADGES / ESTADOS
+   ========================================================================== */
 .badge {
     display: inline-block;
-    padding: 4px 8px;
-    font-size: 0.8em;
-    font-weight: bold;
-    border-radius: 4px;
-    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 
-.badge-activo {
+.badge-disponible,
+.badge-activo,
+.badge-pagada {
     background-color: #dcfce7;
     color: #166534;
 }
 
-.badge-inactivo {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
-
-.table-actions {
-    margin-top: 25px;
-}
-
-.btn-back {
-    display: inline-block;
-    padding: 10px 18px;
-    border: 1px solid #333;
-    background: white;
-    color: black;
-    text-decoration: none;
-    font-size: 0.9em;
-    transition: background 0.2s;
-}
-
-.btn-back:hover {
-    background: #eee;
-}
-
-/* Ocultar flechas (spinners) en Chrome, Safari, Edge y Opera */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-/* Ocultar flechas en Firefox */
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-/* Botón de eliminación destructiva (Rojo) */
-.btn-danger {
-    display: inline-block;
-    padding: 6px 14px;
-    background-color: rgb(177, 29, 29); /* Rojo alerta */
-    color: white;
-    border: none;
-    font-weight: bold;
-    font-size: 0.85em;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.15s;
-}
-
-.btn-danger:hover {
-    background-color: rgb(111, 17, 17);
-}
-
-/* Badge adicional para estados intermedios (Amarillo/Naranja sutil) */
-.badge-pendiente-info {
+.badge-reservada,
+.badge-borrador,
+.badge-vencida {
     background-color: #fef3c7;
     color: #92400e;
 }
 
-/* Botón de acción deshabilitado en tablas  */
-.btn-disabled-action {
-    display: inline-block;
-    background-color: #cbd5e1; /* Gris claro */
-    color: #94a3b8;            /* Icono/Texto gris oscuro */
-    border: none;
-    font-size: 0.85em;
-    border-radius: 4px;
-    pointer-events: none;      /* Desactiva cualquier evento de clic */
-    opacity: 0.7;
+.badge-alquilada,
+.badge-finalizado {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge-inactiva,
+.badge-rescindido,
+.badge-anulada {
+    background-color: #fee2e2;
+    color: #b91c1c;
 }

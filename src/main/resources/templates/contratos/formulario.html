@@ -3,83 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${modoEdicion} ? 'Editar Contrato' : 'Nuevo Contrato'"></title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 30px; }
-        form { max-width: 700px; }
-        label { display: block; margin-top: 12px; }
-        input, select, textarea { width: 100%; padding: 8px; margin-top: 4px; }
-        .acciones { margin-top: 20px; }
-        .btn { padding: 8px 12px; text-decoration: none; border: 1px solid #333; margin-right: 5px; }
-        .error { color: red; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 
-<h1 th:text="${modoEdicion} ? 'Editar Contrato' : 'Nuevo Contrato'"></h1>
-
-<p class="error" th:if="${error}" th:text="${error}"></p>
-
-<form th:action="@{/contratos/guardar}" th:object="${contrato}" method="post">
-	
-	<p th:if="${modoEdicion}">
-	    ID: <span th:text="*{id}"></span>
-	</p>
-    
-	<input type="hidden" th:field="*{eliminado}">
-	
-	<label>Inquilino</label>
-	   <select th:field="*{inquilino.id}" required>
-	       <option value="">Seleccione...</option>
-	       <option th:each="persona : ${personas}"
-	               th:value="${persona.id}"
-	               th:text="${persona.nombreCompleto + ' - ' + persona.documento}">
-	       </option>
-	   </select>
-
-	
-    <label>Propiedad</label>
-	<select th:field="*{propiedad.id}" required>
-	       <option value="">Seleccione...</option>
-	       <option th:each="propiedad : ${propiedades}"
-	               th:value="${propiedad.id}"
-	               th:text="${propiedad.direccion + '(' + propiedad.ciudad + ')'}">
-	       </option>
-	   </select>
-
-   <label>Fecha de inicio</label>
-   <input type="date" th:field="*{fechaInicio}" required>
-	   	   
-	<label>Descripción</label>
-	<textarea th:field="*{descripcion}" rows="4" required></textarea>
-
-    <label>Duración en meses</label>
-    <input type="number" th:field="*{duracionMeses}" min="1" required>
-
-	<label>Importe Mensual</label>
-	<input type="number"
-	       th:field="*{importeMensual}"
-	       min="1"
-	       step="1"
-	       required>
-		   
- 	<label>Vencimiento mensual </label>
-		     <input type="number" th:field="*{diaVencimientoMensual}" min="1" required>
-
-    <label>Estado del contrato</label>
-    <select th:field="*{estado}" required>
-        <option value="borrador">Borrador</option>
-        <option value="activo">Activo</option>
-        <option value="finalizado">Finalizado</option>
-        <option value="rescindido">Rescindido</option>
-    </select>
-
-    
-
-    <div class="acciones">
-        <button type="submit" class="btn">Guardar</button>
-        <a th:href="@{/contratos}" class="btn">Volver</a>
+<div class="page-shell">
+    <div class="module-header">
+        <div class="module-title">
+            <h1 th:text="${modoEdicion} ? 'Editar Contrato' : 'Nuevo Contrato'"></h1>
+            <p>Complete los datos requeridos del contrato.</p>
+        </div>
+        <div class="toolbar">
+            <a th:href="@{/}" class="btn btn-secondary">Inicio</a>
+            <a th:href="@{/contratos}" class="btn btn-secondary">Volver</a>
+        </div>
     </div>
-</form>
+
+    <div class="card">
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <form th:action="@{/contratos/guardar}" th:object="${contrato}" method="post">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{eliminado}">
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Inquilino</label>
+                    <select th:field="*{inquilino.id}" required>
+                        <option value="">Seleccione...</option>
+                        <option th:each="persona : ${personas}"
+                                th:value="${persona.id}"
+                                th:text="${persona.nombreCompleto + ' - ' + persona.documento}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Propiedad</label>
+                    <select th:field="*{propiedad.id}" required>
+                        <option value="">Seleccione...</option>
+                        <option th:each="propiedad : ${propiedades}"
+                                th:value="${propiedad.id}"
+                                th:text="${propiedad.direccion + ' (' + propiedad.ciudad + ')'}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha de inicio</label>
+                    <input type="date" th:field="*{fechaInicio}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Duración en meses</label>
+                    <input type="number" th:field="*{duracionMeses}" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Importe mensual</label>
+                    <input type="number" th:field="*{importeMensual}" min="1" step="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Vencimiento mensual</label>
+                    <input type="number" th:field="*{diaVencimientoMensual}" min="1" max="31" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Estado del contrato</label>
+                    <select th:field="*{estado}" required>
+                        <option value="Borrador">Borrador</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Finalizado">Finalizado</option>
+                        <option value="Rescindido">Rescindido</option>
+                    </select>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label>Descripción</label>
+                    <textarea th:field="*{descripcion}" rows="4" required></textarea>
+                </div>
+            </div>
+
+            <div class="actions-row">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/contratos}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>
