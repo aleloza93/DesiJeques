@@ -3,6 +3,8 @@ package com.desi.jeques.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -111,8 +113,9 @@ public void setEliminado(Boolean eliminado) {
     @ManyToOne(optional = false)
     @JoinColumn(name = "propiedad_id")
     private Propiedad propiedad;
-    
-    @Column(nullable = false)
+        
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fechaInicio;
     
     @Column(nullable = false)

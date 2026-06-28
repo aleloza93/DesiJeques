@@ -2,6 +2,7 @@ package com.desi.jeques.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,6 @@ import com.desi.jeques.repository.ContratoRepository;
 import com.desi.jeques.repository.HistorialEstadoContratoRepository;
 import com.desi.jeques.service.ContratoService;
 import com.desi.jeques.service.PropiedadService;
-import com.desi.jeques.utilidades.EstadoContrato;
 
 @Service
 public class ContratoServiceImpl implements ContratoService {
@@ -31,7 +31,8 @@ public class ContratoServiceImpl implements ContratoService {
 
     @Override
     public List<Contrato> listarContratosActivos() {
-        return contratoRepository.findByEliminadoFalse();
+        // return contratoRepository.findByEliminadoFalse();
+    	return contratoRepository.findByEstadoAndEliminadoFalse("Activo");
     }
     
     
@@ -193,5 +194,29 @@ public class ContratoServiceImpl implements ContratoService {
         historial.setEstado(contrato.getEstado());
         historial.setFechaCambio(LocalDateTime.now());
         historialContratoRepository.save(historial);
+    }
+
+    @Override
+    public List<Contrato> listarConFiltros(Long propiedadId,
+                                           Long inquilinoId,
+                                           LocalDate fechaInicio,
+                                           String estado) {
+
+        List<Contrato> lista = contratoRepository.buscarConFiltros(
+                propiedadId,
+                inquilinoId,
+                fechaInicio,
+                estado);
+
+        System.out.println("Encontrados: " + lista.size());
+
+        for (Contrato c : lista) {
+            System.out.println(
+                "Contrato " + c.getId() +
+                " Propiedad=" + c.getPropiedad().getId() +
+                " Inquilino=" + c.getInquilino().getId());
+        }
+
+        return lista;
     }
 }
