@@ -1,5 +1,7 @@
 package com.desi.jeques.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.desi.jeques.entity.Contrato;
@@ -38,8 +41,30 @@ public class ContratoController {
 
 
 	  @GetMapping
-	    public String listar(Model model) {
-	        model.addAttribute("contratos", contratoService.listarContratosActivos());
+	    public String listar(@RequestParam(required = false) Long propiedadId,
+			                @RequestParam(required = false) Long inquilinoId,
+			                @RequestParam(required = false) LocalDate fechaInicio,
+			                @RequestParam(required = false) String estado,
+			                Model model) {
+		  
+		   System.out.println("propiedadId = " + propiedadId);
+		   System.out.println("inquilinoId = " + inquilinoId);
+		   System.out.println("estado = '" + estado + "'");
+		   System.out.println("fechaInicio = " + fechaInicio);
+		  
+		   if (estado != null && estado.isBlank()) {
+			    estado = null;
+			}
+		   
+		    model.addAttribute("contratos",
+	          contratoService.listarConFiltros(propiedadId, inquilinoId, fechaInicio, estado));
+		    
+		    model.addAttribute("propiedadId", propiedadId);
+	        model.addAttribute("inquilinoId", inquilinoId);
+	        model.addAttribute("fechaInicio", fechaInicio);
+	        model.addAttribute("estado", estado);
+		  
+	        // model.addAttribute("contratos", contratoService.listarContratosActivos());
 	        return "contratos/listado";
 	    }
 	  
@@ -75,7 +100,9 @@ public class ContratoController {
 	            redirectAttributes.addFlashAttribute("error", "El contrato no existe.");
 	            return "redirect:/contratos";
 	        }
-	     	     
+	     	  
+	        System.out.println(contrato.getFechaInicio());
+	        
 	        model.addAttribute("contrato", contrato);
 	        model.addAttribute("personas", personaService.listarActivas());
 	        model.addAttribute("propiedades", propiedadService.listarActivas());
