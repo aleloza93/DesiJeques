@@ -11,10 +11,10 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("/publicaciones")
+    /*@GetMapping("/publicaciones")
     public String publicaciones() {
         return "modulos/publicaciones";
-    }
+    }*/
 
     /*@GetMapping("/contratos")
     public String contratos() {
