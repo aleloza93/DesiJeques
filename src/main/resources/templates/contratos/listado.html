@@ -2,133 +2,133 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Contratos</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-</head>
-<head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Módulo Contratos - DesiJeques</title>    
+    <title>Contratos - DesiJeques</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 
 <div class="dashboard-layout">
-	
-	<aside class="sidebar">
-       <div class="sidebar-brand">
-           <h2>DesiJeques</h2>
-           <span>Gestión Inmobiliaria</span>
-       </div>
-       <nav class="sidebar-menu">
-           <a th:href="@{/}" class="menu-item">🏠 Inicio</a>
-           <a th:href="@{/propiedades}" class="menu-item">🏢 Propiedades</a>
-           <a th:href="@{/publicaciones}" class="menu-item">📢 Publicaciones</a>
-           <a th:href="@{/contratos}" class="menu-item active">📜 Contratos</a>
-           <a th:href="@{/facturas}" class="menu-item">💵 Facturas</a>
-       </nav>            
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>DesiJeques</h2>
+            <span>Gestión Inmobiliaria</span>
+        </div>
+        <nav class="sidebar-menu">
+            <a th:href="@{/}" class="menu-item">🏠 Inicio</a>
+            <a th:href="@{/propiedades}" class="menu-item">🏢 Propiedades</a>
+            <a th:href="@{/publicaciones}" class="menu-item">📢 Publicaciones</a>
+            <a th:href="@{/contratos}" class="menu-item active">📜 Contratos</a>
+            <a th:href="@{/facturas}" class="menu-item">💵 Facturas</a>
+        </nav>
     </aside>
-	<main class="main-content">
-		
-	    <div class="module-header">
-	        <div class="module-title">
-	            <h1>Contratos</h1>
-	            <p>Administración de contratos de alquiler registrados.</p>
-	        </div>
-	        <div class="toolbar">
-	            <a th:href="@{/}" class="btn btn-secondary">Inicio</a>
-	            <a th:href="@{/contratos/nuevo}" class="btn btn-primary">Nuevo Contrato</a>
-	        </div>
-	    </div>
-	
-	    <p class="ok" th:if="${ok}" th:text="${ok}"></p>
-	    <p class="error" th:if="${error}" th:text="${error}"></p>
-		
-		<div class="form-container" style="max-width: 100%; margin: 0 0 24px 0; padding: 20px;">
-		    <form th:action="@{/contratos}" method="get" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
-		        <div class="filter-grid">
-					
-					<div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100px;">
-						<label for="propiedadId" style="font-size: 0.85em; margin-bottom: 4px;">ID Propiedad</label>
-						<input type="number" id="propiedadId" name="propiedadId" th:value="${propiedadId}" style="padding: 8px;"/>
-					</div>
-										
-					<div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100px;">
-						<label for="inquilinoId" style="font-size: 0.85em; margin-bottom: 4px;" >ID Inquilino</label>
-						<input type="number" id="inquilinoId" name="inquilinoId" th:value="${inquilinoId}" style="padding: 8px;" />
-					</div>	
-	
-		            <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100px;">
-		                <label>Estado del contrato</label>
-		                <select name="estado">
-		                    <option value="">Todos</option>
-		                    <option value="Borrador" th:selected="${estado == 'borrador'}">Borrador</option>
-		                    <option value="Activo" th:selected="${estado == 'activo'}">Activo</option>
-		                    <option value="Finalizado" th:selected="${estado == 'finalizado'}">Finalizado</option>
-		                    <option value="Rescindido" th:selected="${estado == 'rescindido'}">Rescindido</option>
-		                </select>				
-		            </div>
-					
-					<div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100px;">
-					     <label>Fecha de inicio</label>
-					     <input type="date" name="fechaInicio" th:value="${fechaInicio}">
-					</div>
-		        </div>
-	
-		        <div class="actions-row">
-		            <button type="submit" class="btn btn-primary">Buscar</button>
-		            <a th:href="@{/contratos}" class="btn btn-secondary">Limpiar</a>
-		        </div>
-		    </form>
-		</div>
-	
-	    <div class="card table-wrapper">
-	        <table class="tabla-listado">
-	            <thead>
-	            <tr>
-	                <th>ID</th>
-	                <th>Propiedad</th>
-	                <th>Propietario</th>
-	                <th>Inquilino</th>
-	                <th>Fecha de inicio</th>
-	                <th>Duración</th>
-	                <th>Importe</th>
-	                <th>Vencimiento</th>
-	                <th>Descripción</th>
-	                <th>Estado</th>
-	                <th>Acciones</th>
-	            </tr>
-	            </thead>
-	            <tbody>
-	            <tr th:each="contrato : ${contratos}">
-	                <td th:text="${contrato.id}"></td>
-	                <td th:text="${contrato.propiedad.direccion + ' - ' + contrato.propiedad.tipoPropiedad}"></td>
-	                <td th:text="${contrato.propiedad.propietario.nombreCompleto}"></td>
-	                <td th:text="${contrato.inquilino.nombreCompleto}"></td>
-	                <td th:text="${contrato.fechaInicio}"></td>
-	                <td th:text="${contrato.duracionMeses}"></td>
-	                <td th:text="${contrato.importeMensual}"></td>
-	                <td th:text="${contrato.diaVencimientoMensual}"></td>
-	                <td th:text="${contrato.descripcion}"></td>
-	                <td>
-	                    <span class="badge"
-	                          th:text="${contrato.estado}"
-	                          th:classappend="${' badge-' + #strings.toLowerCase(contrato.estado)}">
-	                    </span>
-	                </td>
-	                <td>
-	                    <div class="table-actions">
-	                        <a th:href="@{/contratos/editar/{id}(id=${contrato.id})}" class="btn btn-warning btn-sm">Editar</a>
-	                        <a th:href="@{/contratos/eliminar/{id}(id=${contrato.id})}"
-	                           class="btn btn-danger btn-sm"
-	                           onclick="return confirm('¿Seguro que desea eliminar el contrato?')">Eliminar</a>
-	                    </div>
-	                </td>
-	            </tr>
-	            </tbody>
-	        </table>
-	    </div>
-	</main>
+
+    <main class="main-content">
+
+        <div class="module-header">
+            <div class="module-title">
+                <h1>Contratos</h1>
+                <p>Administración de contratos de alquiler registrados.</p>
+            </div>
+            <div class="toolbar">
+                <a th:href="@{/}" class="btn btn-secondary">Inicio</a>
+                <a th:href="@{/contratos/nuevo}" class="btn btn-primary">Nuevo Contrato</a>
+            </div>
+        </div>
+
+        <p class="ok" th:if="${ok}" th:text="${ok}"></p>
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <div class="form-container">
+            <form th:action="@{/contratos}" method="get" class="filters-form">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label for="propiedadId">ID Propiedad</label>
+                        <input type="number" id="propiedadId" name="propiedadId" th:value="${propiedadId}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inquilinoId">ID Inquilino</label>
+                        <input type="number" id="inquilinoId" name="inquilinoId" th:value="${inquilinoId}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado del contrato</label>
+                        <select name="estado">
+                            <option value="">Todos</option>
+                            <option value="Borrador" th:selected="${estado == 'borrador'}">Borrador</option>
+                            <option value="Activo" th:selected="${estado == 'activo'}">Activo</option>
+                            <option value="Finalizado" th:selected="${estado == 'finalizado'}">Finalizado</option>
+                            <option value="Rescindido" th:selected="${estado == 'rescindido'}">Rescindido</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha de inicio</label>
+                        <input type="date" name="fechaInicio" th:value="${fechaInicio}">
+                    </div>
+                </div>
+
+                <div class="actions-row">
+                    <button type="submit" class="btn-submit">Buscar</button>
+                    <a th:href="@{/contratos}" class="btn-cancel">Limpiar</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-container table-wrapper">
+            <table class="tabla-listado">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Propiedad</th>
+                    <th>Propietario</th>
+                    <th>Inquilino</th>
+                    <th>Fecha de inicio</th>
+                    <th>Duración</th>
+                    <th>Importe</th>
+                    <th>Vencimiento</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th class="text-center" colspan="2">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(contratos)}">
+                    <td colspan="12" class="text-center sin-datos">No hay contratos cargados con esos filtros.</td>
+                </tr>
+
+                <tr th:each="contrato : ${contratos}">
+                    <td th:text="${contrato.id}" class="fw-bold"></td>
+                    <td th:text="${contrato.propiedad.direccion + ' - ' + contrato.propiedad.tipoPropiedad}"></td>
+                    <td th:text="${contrato.propiedad.propietario.nombreCompleto}"></td>
+                    <td th:text="${contrato.inquilino.nombreCompleto}"></td>
+                    <td th:text="${contrato.fechaInicio}"></td>
+                    <td th:text="${contrato.duracionMeses}"></td>
+                    <td th:text="${contrato.importeMensual}"></td>
+                    <td th:text="${contrato.diaVencimientoMensual}"></td>
+                    <td th:text="${contrato.descripcion}"></td>
+                    <td>
+                        <span class="badge"
+                              th:text="${contrato.estado}"
+                              th:classappend="${' badge-' + #strings.toLowerCase(contrato.estado)}">
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{/contratos/editar/{id}(id=${contrato.id})}" class="btn-action">Editar</a>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{/contratos/eliminar/{id}(id=${contrato.id})}"
+                           class="btn-danger"
+                           onclick="return confirm('¿Seguro que desea eliminar el contrato?')">Eliminar</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
 </div>
 
 </body>

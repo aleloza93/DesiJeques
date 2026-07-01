@@ -2,106 +2,117 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${modoEdicion} ? 'Editar Publicación' : 'Nueva Publicación'"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 
-<div class="page-shell">
-    <div class="module-header">
-        <div class="module-title">
-            <h1 th:text="${modoEdicion} ? 'Editar Publicación' : 'Nueva Publicación'"></h1>
-            <p>Complete los datos requeridos para registrar o modificar una publicación.</p>
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>DesiJeques</h2>
+            <span>Gestión Inmobiliaria</span>
         </div>
-        <div class="toolbar">
-            <a th:href="@{/}" class="btn btn-secondary">Inicio</a>
-            <a th:href="@{/publicaciones}" class="btn btn-secondary">Volver</a>
+        <nav class="sidebar-menu">
+            <a th:href="@{/}" class="menu-item">🏠 Inicio</a>
+            <a th:href="@{/propiedades}" class="menu-item">🏢 Propiedades</a>
+            <a th:href="@{/publicaciones}" class="menu-item active">📢 Publicaciones</a>
+            <a th:href="@{/contratos}" class="menu-item">📜 Contratos</a>
+            <a th:href="@{/facturas}" class="menu-item">💵 Facturas</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="module-header">
+            <div class="module-title">
+                <h1 th:text="${modoEdicion} ? 'Editar Publicación' : 'Nueva Publicación'"></h1>
+                <p>Complete los datos requeridos para registrar o modificar una publicación.</p>
+            </div>
+            <div class="toolbar">
+                <a th:href="@{/}" class="btn btn-secondary">Inicio</a>
+                <a th:href="@{/publicaciones}" class="btn btn-secondary">Volver</a>
+            </div>
         </div>
-    </div>
 
-    <div class="card">
-        <p class="error" th:if="${error}" th:text="${error}"></p>
+        <div class="form-container">
+            <p class="error" th:if="${error}" th:text="${error}"></p>
 
-        <form th:action="@{/publicaciones/guardar}" th:object="${publicacion}" method="post">
-            <input type="hidden" th:field="*{id}">
-            <input type="hidden" th:field="*{eliminada}">
+            <form th:action="@{/publicaciones/guardar}" th:object="${publicacion}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{eliminada}">
 
-            <div class="form-grid">
+                <div class="form-grid">
 
-                <!-- Propiedad: solo lectura en modo edición -->
-                <div class="form-group form-group-full">
-                    <label>Propiedad</label>
-                    <!-- Alta: lista de propiedades disponibles y activas -->
-                    <select th:if="${!modoEdicion}" th:field="*{propiedad.id}" required>
-                        <option value="">Seleccione una propiedad disponible...</option>
-                        <option th:each="propiedad : ${propiedades}"
-                                th:value="${propiedad.id}"
-                                th:text="${propiedad.direccion + ' - ' + propiedad.ciudad + ' (' + propiedad.tipoPropiedad + ')'}">
-                        </option>
-                    </select>
-                    <!-- Edición: campo de solo lectura -->
-                    <div th:if="${modoEdicion}" style="display: flex; gap: 10px; align-items: center;">
-                        <input type="text"
-                               th:value="${publicacion.propiedad.direccion + ' - ' + publicacion.propiedad.ciudad}"
-                               readonly
-                               style="background-color: #f1f5f9; color: #64748b; cursor: not-allowed; flex: 1;" />
-                        <input type="hidden" th:field="*{propiedad.id}" />
+                    <div class="form-group form-group-full">
+                        <label>Propiedad</label>
+
+                        <select th:if="${!modoEdicion}" th:field="*{propiedad.id}" required>
+                            <option value="">Seleccione una propiedad disponible...</option>
+                            <option th:each="propiedad : ${propiedades}"
+                                    th:value="${propiedad.id}"
+                                    th:text="${propiedad.direccion + ' - ' + propiedad.ciudad + ' (' + propiedad.tipoPropiedad + ')'}">
+                            </option>
+                        </select>
+
+                        <div th:if="${modoEdicion}">
+                            <input type="text"
+                                   th:value="${publicacion.propiedad.direccion + ' - ' + publicacion.propiedad.ciudad}"
+                                   readonly />
+                            <input type="hidden" th:field="*{propiedad.id}" />
+                            <small>La propiedad asociada no puede modificarse una vez creada la publicación.</small>
+                        </div>
                     </div>
-                    <small th:if="${modoEdicion}" style="color: #64748b;">
-                        La propiedad asociada no puede modificarse una vez creada la publicación.
-                    </small>
+
+                    <div class="form-group">
+                        <label>Precio mensual de alquiler ($)</label>
+                        <input type="number" th:field="*{precioMensual}" min="1" step="1" placeholder="Ej: 150000" required />
+                        <span th:if="${error_precioMensual}" th:text="${error_precioMensual}" class="error-campo"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha de publicación</label>
+                        <input type="date" th:field="*{fechaPublicacion}" required />
+                        <span th:if="${error_fechaPublicacion}" th:text="${error_fechaPublicacion}" class="error-campo"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado de la publicación</label>
+                        <select th:field="*{estado}" required>
+                            <option value="activa" th:selected="${publicacion.estado == 'activa'}">Activa</option>
+                            <option value="pausada" th:selected="${publicacion.estado == 'pausada'}">Pausada</option>
+                            <option value="finalizada" th:selected="${publicacion.estado == 'finalizada'}">Finalizada</option>
+                        </select>
+                        <small th:if="${modoEdicion}">
+                            Solo puede activarse si la propiedad está disponible y no existe otra publicación activa para ella.
+                        </small>
+                    </div>
+
+                    <div class="form-group form-group-full">
+                        <label>Condiciones de alquiler</label>
+                        <textarea th:field="*{condicionesAlquiler}" rows="4"
+                                  placeholder="Ej: depósito, garantía, mascotas, expensas..."
+                                  required></textarea>
+                        <small>Incluya depósito, garantía, si acepta mascotas y otras condiciones relevantes.</small>
+                    </div>
+
+                    <div class="form-group form-group-full">
+                        <label>Descripción de la propiedad</label>
+                        <textarea th:field="*{descripcion}" rows="5"
+                                  placeholder="Describa las características destacadas de la propiedad..."
+                                  required></textarea>
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    <label>Precio mensual de alquiler ($)</label>
-                    <input type="number" th:field="*{precioMensual}" min="1" step="1"
-                           placeholder="Ej: 150000" required />
-                    <span th:if="${error_precioMensual}" th:text="${error_precioMensual}" class="error-campo"></span>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Guardar</button>
+                    <a th:href="@{/publicaciones}" class="btn-cancel">Cancelar</a>
                 </div>
-
-                <div class="form-group">
-                    <label>Fecha de publicación</label>
-                    <input type="date" th:field="*{fechaPublicacion}" required />
-                    <span th:if="${error_fechaPublicacion}" th:text="${error_fechaPublicacion}" class="error-campo"></span>
-                </div>
-
-                <div class="form-group">
-                    <label>Estado de la publicación</label>
-                    <select th:field="*{estado}" required>
-                        <option value="activa"     th:selected="${publicacion.estado == 'activa'}">Activa</option>
-                        <option value="pausada"    th:selected="${publicacion.estado == 'pausada'}">Pausada</option>
-                        <option value="finalizada" th:selected="${publicacion.estado == 'finalizada'}">Finalizada</option>
-                    </select>
-                    <small th:if="${modoEdicion}" style="color: #64748b;">
-                        Solo puede activarse si la propiedad está disponible y no existe otra publicación activa para ella.
-                    </small>
-                </div>
-
-                <div class="form-group form-group-full">
-                    <label>Condiciones de alquiler</label>
-                    <textarea th:field="*{condicionesAlquiler}" rows="4"
-                              placeholder="Ej: Depósito 2 meses, garantía propietario, acepta mascotas pequeñas, expensas a cargo del inquilino..."
-                              required></textarea>
-                    <small style="color: #64748b;">
-                        Incluya depósito, garantía, si acepta mascotas y otras condiciones relevantes.
-                    </small>
-                </div>
-
-                <div class="form-group form-group-full">
-                    <label>Descripción de la propiedad</label>
-                    <textarea th:field="*{descripcion}" rows="5"
-                              placeholder="Describa las características destacadas de la propiedad..."
-                              required></textarea>
-                </div>
-
-            </div>
-
-            <div class="actions-row">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <a th:href="@{/publicaciones}" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+    </main>
 </div>
 
 </body>

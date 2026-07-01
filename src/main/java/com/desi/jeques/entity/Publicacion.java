@@ -1,7 +1,9 @@
 package com.desi.jeques.entity;
-
+import org.springframework.format.annotation.DateTimeFormat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +35,7 @@ public class Publicacion {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "fecha_publicacion")
     private LocalDate fechaPublicacion;
 

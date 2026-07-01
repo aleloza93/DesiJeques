@@ -19,6 +19,10 @@ a {
     text-decoration: none;
 }
 
+small {
+    color: #64748b;
+}
+
 /* ==========================================================================
    2. ESTRUCTURA DASHBOARD / LAYOUT PRINCIPAL
    ========================================================================== */
@@ -59,7 +63,6 @@ a {
 
 .menu-item {
     color: #cbd5e1;
-    text-decoration: none;
     padding: 12px 16px;
     border-radius: 6px;
     font-weight: 500;
@@ -74,13 +77,6 @@ a {
 .menu-item.active {
     background-color: #2563eb;
     color: #fff;
-}
-
-.sidebar-footer {
-    font-size: 0.75rem;
-    color: #64748b;
-    border-top: 1px solid #334155;
-    padding-top: 15px;
 }
 
 .main-content {
@@ -98,7 +94,9 @@ a {
     margin: 4px 0 0 0;
 }
 
-/* Grilla de Tarjetas (Submenú) */
+/* ==========================================================================
+   3. HOME / TARJETAS
+   ========================================================================== */
 .contenedor {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -145,7 +143,6 @@ a {
     background-color: #2563eb;
     color: #fff;
     padding: 10px 16px;
-    text-decoration: none;
     font-weight: 600;
     font-size: 0.9rem;
     border-radius: 6px;
@@ -157,29 +154,77 @@ a {
 }
 
 /* ==========================================================================
-   3. FILTROS Y FORMULARIOS (Soporte Completo para Nueva Factura)
+   4. CABECERAS DE MÓDULO
    ========================================================================== */
-.form-container {
-    max-width: 650px; /* Evita que se deforme en pantallas gigantes */
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.module-title h1 {
+    margin-bottom: 4px;
+}
+
+.module-title p {
+    margin: 0;
+    color: #64748b;
+}
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* ==========================================================================
+   5. CONTENEDORES
+   ========================================================================== */
+.form-container,
+.table-container,
+.card {
     background: #ffffff;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
 }
 
-/* Excepción para que la barra de filtros del listado ocupe todo el ancho */
-.main-content .form-container {
-    max-width: 100%;
-    margin: 0 0 24px 0;
+.form-container {
+    max-width: 760px;
+    margin: 0;
+    padding: 30px;
 }
 
+.table-container,
+.card {
+    width: 100%;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.card p:last-child,
+.table-container p:last-child {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   6. FORMULARIOS Y FILTROS
+   ========================================================================== */
 .form-section {
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 1px solid #f1f2f6;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .form-section h3 {
@@ -195,13 +240,29 @@ a {
     flex-direction: column;
 }
 
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 15px;
 }
 
-label, .form-container label {
+.filters-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+label {
     font-weight: 600;
     margin-bottom: 6px;
     color: #4b5563;
@@ -212,11 +273,7 @@ input[type="text"],
 input[type="number"],
 input[type="date"],
 select,
-textarea,
-.form-container input[type="text"],
-.form-container input[type="number"],
-.form-container input[type="date"],
-.form-container select {
+textarea {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #cbd5e1;
@@ -227,20 +284,26 @@ textarea,
     box-sizing: border-box;
 }
 
-input[readonly], .form-container input[readonly] {
+textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+input[readonly] {
     background-color: #f1f5f9;
     color: #64748b;
     cursor: not-allowed;
     border-color: #e2e8f0;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-/* Prefijos de Moneda ($) */
 .input-with-prefix {
     display: flex;
     align-items: center;
@@ -261,43 +324,21 @@ input:focus, select:focus, textarea:focus {
     padding-left: 28px !important;
 }
 
-/* Gestión de Errores de Validación en Campos */
-.error-global {
-    background-color: #fee2e2;
-    border: 1px solid #fca5a5;
-    color: #b91c1c;
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    font-weight: 600;
+.actions-row,
+.form-actions,
+.table-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 20px;
 }
-.error-global p { margin: 0; }
-
-.error-campo {
-    color: #dc2626;
-    font-size: 0.82em;
-    margin-top: 4px;
-    font-weight: 600;
-}
-
-/* Ocultar flechas de inputs numéricos */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-input[type="number"] { -moz-appearance: textfield; }
 
 /* ==========================================================================
-   4. TABLAS Y CONTENEDORES
+   7. TABLAS
    ========================================================================== */
-.table-container {
-    max-width: 100%;
-    background: white;
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e2e8f0;
+.table-wrapper {
+    overflow-x: auto;
 }
 
 .tabla-listado {
@@ -319,94 +360,135 @@ input[type="number"] { -moz-appearance: textfield; }
 .tabla-listado td {
     padding: 12px;
     border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
 }
 
 .tabla-listado tbody tr:hover {
     background-color: #f8fafc;
 }
 
-.text-center { text-align: center !important; }
-.fw-bold { font-weight: bold; }
-.sin-datos { color: #888; font-style: italic; padding: 25px !important; }
+.text-center {
+    text-align: center !important;
+}
+
+.fw-bold {
+    font-weight: bold;
+}
+
+.sin-datos {
+    color: #888;
+    font-style: italic;
+    padding: 25px !important;
+}
 
 /* ==========================================================================
-   5. BOTONES Y ACCIONES
+   8. BOTONES
    ========================================================================== */
-.form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
+.btn,
+.btn-submit,
+.btn-back,
+.btn-cancel,
+.btn-action,
+.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    text-decoration: none;
+    box-sizing: border-box;
 }
 
+.btn,
+.btn-submit,
+.btn-back,
+.btn-cancel {
+    padding: 10px 16px;
+    font-size: 0.92rem;
+    min-height: 40px;
+}
+
+.btn-primary,
 .btn-submit {
     background-color: #2563eb;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 1em;
-    flex: 2;
-    transition: background-color 0.2s;
+    color: #fff;
 }
-.btn-submit:hover { background-color: #1d4ed8; }
 
-.btn-back, .btn-cancel {
-    display: inline-block;
-    padding: 12px 24px;
+.btn-primary:hover,
+.btn-submit:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-secondary,
+.btn-back,
+.btn-cancel {
+    background: #e2e8f0;
+    color: #334155;
     border: 1px solid #cbd5e1;
-    background: white;
-    color: #475569;
-    text-decoration: none;
-    font-size: 0.95em;
-    border-radius: 5px;
-    font-weight: bold;
-    text-align: center;
-    flex: 1;
-    transition: background-color 0.2s;
 }
-.btn-back:hover, .btn-cancel:hover { background: #cbd5e1; color: #334155; }
 
-.btn-action {
-    display: inline-block;
-    padding: 6px 14px;
-    background-color: #475569;
-    color: white;
-    font-weight: bold;
-    font-size: 0.85em;
-    border-radius: 4px;
-    transition: background-color 0.15s;
+.btn-secondary:hover,
+.btn-back:hover,
+.btn-cancel:hover {
+    background: #cbd5e1;
 }
-.btn-action:hover { background-color: #334155; }
+
+.btn-warning {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.btn-warning:hover {
+    background-color: #d97706;
+}
 
 .btn-danger {
-    display: inline-block;
-    padding: 6px 14px;
+    padding: 8px 14px;
     background-color: #dc2626;
-    color: white;
-    border: none;
-    font-weight: bold;
-    font-size: 0.85em;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.15s;
+    color: #fff;
+    font-size: 0.85rem;
 }
-.btn-danger:hover { background-color: #b91c1c; }
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
+.btn-action {
+    padding: 8px 14px;
+    background-color: #475569;
+    color: #fff;
+    font-size: 0.85rem;
+}
+
+.btn-action:hover {
+    background-color: #334155;
+}
+
+.btn-sm {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+}
 
 .btn-disabled-action {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
     background-color: #cbd5e1;
     color: #94a3b8;
     border: none;
-    font-size: 0.85em;
-    border-radius: 4px;
+    font-size: 0.82rem;
+    border-radius: 6px;
     pointer-events: none;
     opacity: 0.7;
+    cursor: not-allowed;
 }
 
 /* ==========================================================================
-   6. BADGES / ESTADOS COMPLETOS
+   9. BADGES / ESTADOS
    ========================================================================== */
 .badge {
     display: inline-block;
@@ -417,43 +499,173 @@ input[type="number"] { -moz-appearance: textfield; }
     text-transform: uppercase;
 }
 
-.badge-disponible, .badge-activo, .badge-pagada {
+.badge-disponible,
+.badge-activo,
+.badge-pagada,
+.badge-activa {
     background-color: #dcfce7;
     color: #166534;
 }
 
-.badge-pendiente-info, .badge-reservada, .badge-borrador, .badge-vencida {
+.badge-pendiente-info,
+.badge-reservada,
+.badge-borrador,
+.badge-vencida,
+.badge-pausada {
     background-color: #fef3c7;
     color: #92400e;
 }
 
-.badge-alquilada, .badge-finalizado {
+.badge-alquilada,
+.badge-finalizado {
     background-color: #dbeafe;
     color: #1d4ed8;
 }
 
-.badge-inactiva, .badge-rescindido, .badge-anulada, .badge-inactivo {
+.badge-inactiva,
+.badge-rescindido,
+.badge-anulada,
+.badge-inactivo,
+.badge-finalizada {
     background-color: #fee2e2;
     color: #b91c1c;
 }
-/* ==========================================================================
-   7. Mensajes de Error
-   ========================================================================== */
 
+/* ==========================================================================
+   10. MENSAJES
+   ========================================================================== */
+.ok,
 .mensaje-exito {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
     padding: 12px;
-    margin: 15px 0;
+    margin: 0 0 20px 0;
     border-radius: 6px;
+    font-weight: 600;
 }
 
-.mensaje-error {
+.error,
+.mensaje-error,
+.error-global {
     background-color: #f8d7da;
-    color: #721c24;
     border: 1px solid #f5c6cb;
+    color: #721c24;
     padding: 12px;
-    margin: 15px 0;
     border-radius: 6px;
+    margin: 0 0 20px 0;
+    font-weight: 600;
+}
+
+.error-global p,
+.mensaje-exito p,
+.mensaje-error p {
+    margin: 0;
+}
+
+.error-campo {
+    color: #dc2626;
+    font-size: 0.82em;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   11. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 992px) {
+    .dashboard-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .main-content {
+        padding: 24px;
+    }
+
+    .form-grid,
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-container {
+        max-width: 100%;
+    }
+}
+
+.btn.btn-secondary {
+    background: #e2e8f0;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+.btn.btn-secondary:hover {
+    background: #cbd5e1;
+}
+
+.btn.btn-primary {
+    background-color: #2563eb;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+.btn.btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+/* ===== FIX BOTONES TOOLBAR ===== */
+.toolbar a.btn,
+.toolbar a.btn.btn-secondary,
+.toolbar a.btn.btn-primary {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px 16px !important;
+    min-height: 40px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+    transition: all 0.2s ease !important;
+}
+
+.toolbar a.btn.btn-secondary {
+    background: #e2e8f0 !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+.toolbar a.btn.btn-secondary:hover {
+    background: #cbd5e1 !important;
+}
+
+.toolbar a.btn.btn-primary {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    border: 1px solid #2563eb !important;
+}
+
+.toolbar a.btn.btn-primary:hover {
+    background-color: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
 }

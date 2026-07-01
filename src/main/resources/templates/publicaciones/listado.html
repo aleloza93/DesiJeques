@@ -44,59 +44,55 @@
             <span th:text="${error}"></span>
         </div>
 
-        <!-- Filtros -->
-        <div class="form-container" style="max-width: 100%; margin: 0 0 24px 0; padding: 20px;">
-            <form th:action="@{/publicaciones}" method="get"
-                  style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+        <div class="form-container">
+            <form th:action="@{/publicaciones}" method="get" class="filters-form">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label>Propiedad</label>
+                        <select name="propiedadId">
+                            <option value="">Todas</option>
+                            <option th:each="propiedad : ${propiedades}"
+                                    th:value="${propiedad.id}"
+                                    th:text="${propiedad.direccion + ' (' + propiedad.ciudad + ')'}"
+                                    th:selected="${propiedad.id == propiedadId}">
+                            </option>
+                        </select>
+                    </div>
 
-                <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 140px;">
-                    <label style="font-size: 0.85em; margin-bottom: 4px;">Propiedad</label>
-                    <select name="propiedadId" style="padding: 8px;">
-                        <option value="">Todas</option>
-                        <option th:each="propiedad : ${propiedades}"
-                                th:value="${propiedad.id}"
-                                th:text="${propiedad.direccion + ' (' + propiedad.ciudad + ')'}"
-                                th:selected="${propiedad.id == propiedadId}">
-                        </option>
-                    </select>
+                    <div class="form-group">
+                        <label>Ciudad</label>
+                        <input type="text" name="ciudad" th:value="${ciudad}" placeholder="Ej: Santa Fe" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select name="estado">
+                            <option value="">Todos</option>
+                            <option value="activa" th:selected="${estado == 'activa'}">Activa</option>
+                            <option value="pausada" th:selected="${estado == 'pausada'}">Pausada</option>
+                            <option value="finalizada" th:selected="${estado == 'finalizada'}">Finalizada</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio mín. $</label>
+                        <input type="number" name="precioMin" th:value="${precioMin}" min="0" placeholder="0" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio máx. $</label>
+                        <input type="number" name="precioMax" th:value="${precioMax}" min="0" placeholder="Sin límite" />
+                    </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 120px;">
-                    <label style="font-size: 0.85em; margin-bottom: 4px;">Ciudad</label>
-                    <input type="text" name="ciudad" th:value="${ciudad}" style="padding: 8px;" placeholder="Ej: Buenos Aires" />
-                </div>
-
-                <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 130px;">
-                    <label style="font-size: 0.85em; margin-bottom: 4px;">Estado</label>
-                    <select name="estado" style="padding: 8px;">
-                        <option value="">Todos</option>
-                        <option value="activa"     th:selected="${estado == 'activa'}">Activa</option>
-                        <option value="pausada"    th:selected="${estado == 'pausada'}">Pausada</option>
-                        <option value="finalizada" th:selected="${estado == 'finalizada'}">Finalizada</option>
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 110px;">
-                    <label style="font-size: 0.85em; margin-bottom: 4px;">Precio mín. $</label>
-                    <input type="number" name="precioMin" th:value="${precioMin}"
-                           style="padding: 8px;" min="0" placeholder="0" />
-                </div>
-
-                <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 110px;">
-                    <label style="font-size: 0.85em; margin-bottom: 4px;">Precio máx. $</label>
-                    <input type="number" name="precioMax" th:value="${precioMax}"
-                           style="padding: 8px;" min="0" placeholder="Sin límite" />
-                </div>
-
-                <div style="margin-bottom: 0; display: flex; gap: 8px; align-items: center;">
-                    <button type="submit" class="btn btn-primary">Buscar</button>
-                    <a th:href="@{/publicaciones}" class="btn btn-secondary">Limpiar</a>
+                <div class="actions-row">
+                    <button type="submit" class="btn-submit">Buscar</button>
+                    <a th:href="@{/publicaciones}" class="btn-cancel">Limpiar</a>
                 </div>
             </form>
         </div>
 
-        <!-- Tabla -->
-        <div class="card table-wrapper">
+        <div class="table-container table-wrapper">
             <table class="tabla-listado">
                 <thead>
                 <tr>
@@ -110,6 +106,10 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:if="${#lists.isEmpty(publicaciones)}">
+                    <td colspan="8" class="text-center sin-datos">No hay publicaciones cargadas con esos filtros.</td>
+                </tr>
+
                 <tr th:each="pub : ${publicaciones}">
                     <td th:text="${pub.id}" class="fw-bold"></td>
                     <td th:text="${pub.propiedad.direccion}"></td>
@@ -118,26 +118,24 @@
                     <td th:text="${pub.fechaPublicacion != null ? #temporals.format(pub.fechaPublicacion, 'dd/MM/yyyy') : '-'}"></td>
                     <td>
                         <span th:text="${pub.estado}"
-                              th:class="${pub.estado == 'activa'     ? 'badge badge-activo'   :
-                                         pub.estado == 'pausada'    ? 'badge badge-pendiente-info' :
-                                                                       'badge badge-inactivo'}">
+                              th:class="${pub.estado == 'activa' ? 'badge badge-activa' :
+                                         pub.estado == 'pausada' ? 'badge badge-pausada' :
+                                         'badge badge-finalizada'}">
                         </span>
                     </td>
-                    <td class="text-center" style="width: 90px;">
-                        <a th:href="@{/publicaciones/editar/{id}(id=${pub.id})}"
-                           class="btn btn-warning btn-sm">Editar</a>
+                    <td class="text-center">
+                        <a th:href="@{/publicaciones/editar/{id}(id=${pub.id})}" class="btn-action">Editar</a>
                     </td>
-                    <td class="text-center" style="width: 90px;">
-                        <!-- Solo se pueden eliminar publicaciones activas -->
+                    <td class="text-center">
                         <a th:if="${pub.estado == 'activa'}"
                            th:href="@{/publicaciones/eliminar/{id}(id=${pub.id})}"
-                           class="btn btn-danger btn-sm"
+                           class="btn-danger"
                            onclick="return confirm('¿Seguro que desea eliminar esta publicación? La acción no podrá revertirse.')">
                             Eliminar
                         </a>
                         <button th:unless="${pub.estado == 'activa'}"
                                 type="button"
-                                class="btn-disabled-action btn-sm"
+                                class="btn-disabled-action"
                                 th:title="${'No se puede eliminar una publicación ' + pub.estado}"
                                 disabled>
                             Eliminar
